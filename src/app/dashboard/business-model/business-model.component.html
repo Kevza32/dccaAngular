@@ -1,0 +1,175 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Tramite
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+
+                        <div class="form-group col-md-6">
+                            <label>Categorización</label>
+                            <select [(ngModel)]="opcionBusinessClass" class="form-control" (change)="loadData()">
+                                <option value=null></option>
+                                <option *ngFor="let item of listaCategorias"
+                                    value="{{item.DataBeanProperties.IDBusinessClass}}">{{item.DataBeanProperties.Name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="opcionBusinessClass > 0 " class="form-group col-md-6">
+                            <label>Crear Modelo&nbsp;&nbsp;</label>
+                            <button type="button" class="btn btn-outline-green" (click)="openModelo(modalModelo)"
+                                (click)="modifyModelo(0 , 'Crear')" (click)="clearModelo()">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body h-100 d-flex flex-column justify-content-center py-5 py-xl-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Buscar</label>
+                            <input class="form-control" type="text" [(ngModel)]="filterPost" />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="datatable">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Privado</th>
+                                    <th>Publico</th>
+                                    <th>Usar Canal de Distribución</th>
+                                    <th>Accion</th>
+                                </tr>
+                            </thead>
+                            <!-- | filterModelo:filterPost -->
+                            <tbody>
+                                <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <tr
+                                    *ngFor="let modelo of listModel | filterModelo:filterPost | paginate: {itemsPerPage: 15, currentPage: pageActual}">
+                                    <td>{{modelo.DataBeanProperties.IDBusinessProcess}}</td>
+                                    <td>{{modelo.DataBeanProperties.Name}}</td>
+                                    <td>{{modelo.DataBeanProperties.Description}}</td>
+                                    <td>{{modelo.DataBeanProperties.PrivateBusiness}}</td>
+                                    <td>{{modelo.DataBeanProperties.PublicBusiness}}</td>
+                                    <td>{{modelo.DataBeanProperties.UseDistributionChannel}}</td>
+
+
+
+                                    <td>
+                                        <button title="Editar Modelo"
+                                            class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                            (click)="openModelo(modalModelo)"
+                                            (click)="modifyModelo(modelo.DataBeanProperties.IDBusinessProcess , 'Editar')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button title="Eliminar Modelo"
+                                            class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                            (click)="openDelete(modelo.DataBeanProperties.IDBusinessProcess, modalDelete)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination-controls (pageChange)="pageActual = $event"></pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #modalModelo>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <label>Nombre</label>
+                    <input class="form-control" type="text" [(ngModel)]="opcionNombre" name="nombre" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Descripción</label>
+                    <textarea class="form-control" rows="4" [(ngModel)]="opcionDescripcion"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-6">
+                    <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" id="customCheck1" type="checkbox"
+                            [(ngModel)]="opcionPrivate" (click)="check()" name="checkPrivate" />
+                        <label class="custom-control-label" for="customCheck1">Privado</label>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="custom-control custom-checkbox">
+                        <input class="custom-control-input" id="customCheck2" type="checkbox"
+                            [(ngModel)]="opcionPublico" name="checkPrivate" (click)="check()" />
+                        <label class="custom-control-label" for="customCheck2">Publico</label>
+                    </div>
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="txtFormEnginne">Usar Canal de Distribución</label>
+                    <br>
+                    <div class="btn-group" btnRadioGroup [(ngModel)]="UseDistributionChannel">
+                        <label class="btn btn-outline-success3" btnRadio=true [uncheckable]="false" tabindex="0"
+                            role="button">Si
+                        </label>
+                        <label class="btn btn-outline-success3" btnRadio=false [uncheckable]="false" tabindex="0"
+                            role="button">No</label>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="sendModelo()">{{titleBS}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalDelete>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteModelo()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>

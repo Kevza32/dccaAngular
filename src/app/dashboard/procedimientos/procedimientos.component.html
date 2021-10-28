@@ -1,0 +1,379 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Procedimientos
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Caracterización</label>
+                            <select [(ngModel)]="opcionBusinessClass" class="form-control"
+                                (change)="listarProcesosNegocio()">
+                                <option value=null></option>
+                                <option *ngFor="let item of listaCategorias"
+                                    value="{{item.DataBeanProperties.IDBusinessClass}}">
+                                    {{item.DataBeanProperties.Name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="opcionBusinessClass > 0 " class="col-md-6">
+                            <div class="form-group">
+                                <label for="cbxBussinessProccess">Tramite</label>
+                                <select id="cbxBussinessProccess" class="form-control" (change)="listarProcedimientos()"
+                                    [(ngModel)]="cbxBussinessProccess">
+                                    <option [ngValue]="" hidden disabled></option>
+                                    <option *ngFor="let item of listaProcesosNegocio"
+                                        [ngValue]="item.DataBeanProperties.IDBusinessProcess">
+                                        {{item.DataBeanProperties.Name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" *ngIf="cbxBussinessProccess != null">
+                    <div class="card-header">
+                        <div class="mt-4">
+                            <label>&nbsp;&nbsp;</label>
+                            <button type="button" class="btn btn-outline-green" (click)="abirCrear(modalCrear)"
+                                (click)="clear()">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body h-100 d-flex flex-column justify-content-center py-5 py-xl-4">
+                        <div class="row my-2">
+                            <div class="col-md-6">
+                                <label>Buscar</label>
+                                <input class="form-control" type="text" [(ngModel)]="filterPost" />
+                            </div>
+                        </div>
+                        <div class="datatable">
+                            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Nombre</th>
+                                        <th>Descripción</th>
+                                        <th>Orden Fila</th>
+                                        <th>Es condicional</th>
+                                        <th>Linea opción positiva</th>
+                                        <th>Linea opción negativa</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                    <tr
+                                        *ngFor="let item of listaDeProcedimientos | filterProcedimientos: filterPost | paginate: {itemsPerPage: 10, currentPage: pageActual}">
+                                        <td>{{item.DataBeanProperties.IDProcedure}}</td>
+                                        <td>{{item.DataBeanProperties.Name}}</td>
+                                        <td>{{item.DataBeanProperties.Description}}</td>
+                                        <td>{{item.DataBeanProperties.ProcedureRow}}</td>
+                                        <td
+                                            *ngIf="item.DataBeanProperties.IsConditional==true || item.DataBeanProperties.IsConditional=='true'">
+                                            <img src="assets/img/aprobado-32.png" alt="Si">
+                                        </td>
+                                        <td
+                                            *ngIf="item.DataBeanProperties.IsConditional==false||item.DataBeanProperties.IsConditional=='false'|| item.DataBeanProperties.IsConditional==null">
+                                            <img src="" src="assets/img/rechazado-32.png" alt="No">
+                                        </td>
+                                        <td>{{item.DataBeanProperties.TrueIDLnPath}}</td>
+                                        <td>{{item.DataBeanProperties.FalseIDLnPath}}</td>
+                                        <td>{{item.DataBeanProperties.BusinessState}}</td>
+                                        <td>
+                                            <button title="Editar" class=" btn-datatable btn-icon btn-transparent-dark"
+                                                type="button" (click)="abrirEdit(modalCrear, item.DataBeanProperties)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button title="Eliminar"
+                                                class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                (click)="abrirEliminar(eliminarP,item.DataBeanProperties)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+
+                                            <button title="Requisitos a usuario del tramite"
+                                                class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                (click)="document(0,item.DataBeanProperties);parentModal.show()">
+                                                <i class="fa fa-user" aria-hidden="true"></i>
+
+                                            </button>
+                                            <button title="Acciones de areas de atención"
+                                                class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                (click)="document(1,item.DataBeanProperties);parentModal.show()">
+                                                <i class="fa fa-tasks" aria-hidden="true"></i>
+
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <pagination-controls (pageChange)="pageActual = $event"></pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalCrear>
+    <div class="card">
+        <div class="card-header">
+            <h6 *ngIf="beanProcedimiento.IDProcedure == null"> Crear </h6>
+            <h6 *ngIf="beanProcedimiento.IDProcedure != null"> Editar </h6>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="form-group col-12">
+                    <label for="txtNombre">Nombre</label>
+                    <input type="text" id="txtNombre" [(ngModel)]="beanProcedimiento.Name" class="form-control">
+                </div>
+                <div class="form-group col-12">
+                    <label for="txtDescripcion">Descripción</label>
+                    <textarea id="txtDescripcion" class="form-control"
+                        [(ngModel)]="beanProcedimiento.Description"></textarea>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtFilas">Filas</label>
+                    <input type="number" min="0" step="1" id="txtFilas" [(ngModel)]="beanProcedimiento.ProcedureRow"
+                        class="form-control">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="cbxEstado">Estado</label>
+                    <select type="text" id="cbxEstado" class="form-control"
+                        [(ngModel)]="beanProcedimiento.IDProcedureState">
+                        <option value="" disabled hidden></option>
+                        <option *ngFor="let item of listaEstados" [ngValue]="item.DataBeanProperties.IDProcedureState">
+                            {{item.DataBeanProperties.Name}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="cbxEstadoProceso">Estado de Proceso de Negocio</label>
+                    <select type="text" id="cbxEstadoProceso" class="form-control"
+                        [(ngModel)]="beanProcedimiento.IDBusinessState">
+                        <option value="" disabled hidden></option>
+                        <option *ngFor="let item of listaEstadosProcesos"
+                            [ngValue]="item.DataBeanProperties.IDBusinessState">
+                            {{item.DataBeanProperties.Name}}</option>
+                    </select>
+                </div>
+                <app-modal-unit class="d-none" (idInputUnit)="getUnit($event)" (nameUnitINput)="getNameUnit($event)">
+                </app-modal-unit>
+                <div class="form-group col-6">
+                    <label for="txtFormEnginne">Es codicional</label>
+                    <br>
+                    <div class="btn-group" btnRadioGroup [(ngModel)]="beanProcedimiento.IsConditional">
+                        <label class="btn btn-outline-success" btnRadio=true [uncheckable]="false" tabindex="0"
+                            role="button">Si </label>
+                        <label class="btn btn-outline-success" btnRadio=false [uncheckable]="false" tabindex="0"
+                            role="button">No</label>
+                    </div>
+                </div>
+
+                <div *ngIf="beanProcedimiento.IsConditional == 'true'" class="form-group col-6">
+                    <label for="txtFormEnginne">Línea opción positiva</label>
+                    <input class="form-control" type="text" id="txtFormEnginne"
+                        [(ngModel)]="beanProcedimiento.TrueIDLnPath">
+                </div>
+                <div *ngIf="beanProcedimiento.IsConditional == 'true'" class="form-group col-6">
+                    <label for="txtFormEnginne">Línea opción Negativa</label>
+                    <input class="form-control" type="text" id="txtFormEnginne"
+                        [(ngModel)]="beanProcedimiento.FalseIDLnPath">
+                </div>
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-outline-success2 m-1" (click)="validar()">Guardar</button>
+            <button class="btn btn-outline-danger m-1" (click)="modalRef.hide()">Cerrar</button>
+
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #eliminarP>
+    <div class="modal-body text-center">
+        <p>¿Estás seguro de eliminar?</p>
+        <button class="btn btn-outline-success m-1" (click)="eliminarPro()">Si</button>
+        <button class="btn btn-outline-danger m-1" (click)="modalRef.hide()">No</button>
+    </div>
+</ng-template>
+
+
+<div class="modal fade" bsModal #parentModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name1" class="modal-title pull-left">{{mensaje}}</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="parentModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="mt-4">
+                            <label>&nbsp;&nbsp;</label>
+                            <button type="button" class="btn btn-outline-primary" (click)="childModal.show()"
+                                (click)="clear()">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body h-100 d-flex flex-column justify-content-center py-5 py-xl-4">
+                        <div style="overflow: scroll;" class="datatable">
+                            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Descripcion</th>
+                                        <th>Tipo de documento</th>
+                                        <th>Tiempo Validez</th>
+                                        <th>Tiempo Defecto</th>
+                                        <th>Area Encargada</th>
+                                        <th>Form URL Component</th>
+                                        <th>Form Engine Component </th>
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr *ngFor="let item of listaDocumentos">
+                                        <td>{{item.DataBeanProperties.IDDocument}}</td>
+                                        <td>{{item.DataBeanProperties.Name}}</td>
+                                        <td>{{item.DataBeanProperties.Description}}</td>
+                                        <td>{{tipoDoc[item.DataBeanProperties.DocumentType]}}</td>
+                                        <td>{{item.DataBeanProperties.ValidityType}}</td>
+                                        <td>{{item.DataBeanProperties.DefeatTime}}</td>
+                                        <td>{{item.DataBeanProperties.FunctionalIDName}}</td>
+                                        <td>{{item.DataBeanProperties.FormURLComponent}}</td>
+                                        <td>{{item.DataBeanProperties.FormEngine}}</td>
+
+                                        <td>
+                                            <button title="Editar" class=" btn-datatable btn-icon btn-transparent-dark"
+                                                type="button"
+                                                (click)="childModal.show();abirEditarDocumento(item.DataBeanProperties)">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button title="Eliminar"
+                                                class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                (click)="thirdModal.show(); abirEditarDocumento(item.DataBeanProperties)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-danger" (click)="parentModal.hide()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" bsModal #childModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name2">
+    <div *ngIf="beanDocument" class="modal-dialog modal-xl p-4">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">Documento</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="childModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <label for="txtNombre">Nombre</label>
+                        <input class="form-control" type="text" id="txtNombre" [(ngModel)]="beanDocument.Name">
+                    </div>
+                    <div class="form-group col-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea id="txtDescripcion" class="form-control"
+                            [(ngModel)]="beanDocument.Description"></textarea>
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="txtTiempoV">Tiempo de validez</label>
+                        <input class="form-control" type="text" id="txtTiempoV" [(ngModel)]="beanDocument.ValidityType">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="txtTiempoDefecto">Tiempo por defecto</label>
+                        <input class="form-control" type="text" id="txtTiempoDefecto"
+                            [(ngModel)]="beanDocument.DefeatTime">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="cbxTipoDoc">Tipo de documento</label>
+                        <select id="cbxTipoDoc" class="form-control" [(ngModel)]="beanDocument.DocumentType">
+                            <option hidden disabled></option>
+                            <option value="2">Documento / Anexo</option>
+                            <option value="3">Forma</option>
+                        </select>
+                    </div>
+                    <app-modal-unit class="d-none" (idInputUnit)="getUnit($event)"
+                        (nameUnitINput)="getNameUnit($event)"></app-modal-unit>
+                    <div class="form-group col-6">
+                        <label for="txtAreaF">Area funcional</label>
+                        <input class="form-control" type="text" readonly type="text" (click)="abrirModalAF()"
+                            [(ngModel)]="nameUNit">
+                        <!-- id="txtAreaF" [(ngModel)]="beanDocument.IDLnFunctionalID" -->
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="txtFormUrl">Form Url Component</label>
+                        <input class="form-control" type="text" id="txtFormUrl"
+                            [(ngModel)]="beanDocument.FormURLComponent">
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="txtFormEnginne">Form Engine</label>
+                        <input class="form-control" type="text" id="txtFormEnginne"
+                            [(ngModel)]="beanDocument.FormEngine">
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-danger" id="btnCerrarDoc" (click)="childModal.hide()">Cerrar</button>
+                <button class="btn btn-outline-success" (click)="validarDocumento()">Guardar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" bsModal #thirdModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <div class="modal-body text-center">
+                <p>¿Estás seguro de eliminar?</p>
+                <button class="btn btn-outline-success m-1" (click)="eliminarDocumento()">Si</button>
+                <button class="btn btn-outline-danger m-1" id="btnCerrarDocEl" (click)="thirdModal.hide()">No</button>
+            </div>
+        </div>
+    </div>
+</div>

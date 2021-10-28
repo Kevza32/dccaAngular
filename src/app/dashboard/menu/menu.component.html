@@ -1,0 +1,385 @@
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto mt-4">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Módulos, Menús y Roles
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div id="main-content" class="container-fluid mt-n10">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="accordion" id="accordionExample">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                        <h2 class="mb-0">
+                            <button class="btn btn-outline-green text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Módulos
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <br>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label>Crear Módulo&nbsp;&nbsp;</label>
+                                    <button type="button" class="btn btn-outline-green" (click)="openModule(modalModule)" (click)="modifyModule(0 , 'Crear')" (click)="cleanModule()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Nombre</th>
+                                            <th>Propósito</th>
+                                            <th>Link</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        </div>
+                                        <tr *ngFor="let module of listModule">
+                                            <td>{{module.DataBeanProperties.IDApplicationType}}</td>
+                                            <td>{{module.DataBeanProperties.Name}}</td>
+                                            <td>{{module.DataBeanProperties.Purpose}}</td>
+                                            <td>{{module.DataBeanProperties.AppLink}}</td>
+                                            <td>
+                                                <button title="Editar Módulo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openModule(modalModule)" (click)="modifyModule(module.DataBeanProperties.IDApplicationType , 'Editar')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button title="Eliminar Módulo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openDeleteModule(module.DataBeanProperties.IDApplicationType, modalDeleteModule)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                        <h2 class="mb-0">
+                            <button class="btn btn-outline-green text-left" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Menú
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <br>
+                            <div class="row">
+                                <div class="col-6">
+                                    <select class="form-control" [(ngModel)]="opcionModule" (change)="getTreeForApplicationID()" name="selectorModule">
+                                        <option [ngValue]="undefined" hidden>{{selectorModule}}</option>
+                                        <option [ngValue]="module.DataBeanProperties.IDApplicationType"
+                                            *ngFor="let module of listModule">{{module.DataBeanProperties.Name}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label>Agregar Menú&nbsp;&nbsp;</label>
+                                    <button type="button" class="btn btn-outline-green" (click)="openMenu(modalMenu)" (click)="modifyMenu(0 , 'Crear')" (click)="cleanMenu2()" (click)="newChild(0)">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="list-group grupotabla" *ngFor="let item of lista_tree">
+                                <div class="modulo0">
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openMenu(modalMenu)" (click)="modifyMenu(item.DataBeanProperties.IDLn , 'Editar')">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn btn-datatable btn-icon btn-transparent-dark" (click)="openDeleteMenu(item.DataBeanProperties.IDLn, modalDeleteMenu)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                    <span class="txt_r">{{decodeval(item.DataBeanProperties.Name)}}</span>
+                                    <small class="descripcion">
+                                        ({{decodeval(item.DataBeanProperties.Code)}})</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingThree">
+                        <h2 class="mb-0">
+                            <button class="btn btn-outline-green text-left" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Roles
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                        <div class="card-body">
+                            <br>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label>Crear Rol&nbsp;&nbsp;</label>
+                                    <button type="button" class="btn btn-outline-green" (click)="openRol(modalRol)" (click)="modifyRol(0 , 'Crear')" (click)="cleanRol()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Nombre</th>
+                                            <th>Descripción</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let rol of listRole">
+                                            <td>{{rol.DataBeanProperties.IDRole}}</td>
+                                            <td>{{rol.DataBeanProperties.Name}}</td>
+                                            <td>{{rol.DataBeanProperties.Description}}</td>
+                                            <td>{{rol.DataBeanProperties.State}}</td>
+                                            <td>
+                                                <button title="Asignar Rol" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openAssign(modalAssignRol)" (click)="validateRol(rol.DataBeanProperties.IDRole)">
+                                                    <i class="fas fa-ellipsis-v"></i>
+                                                </button>
+                                                <button title="Editar Rol" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openRol(modalRol)" (click)="modifyRol(rol.DataBeanProperties.IDRole , 'Editar')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button title="Eliminar Rol" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openDeleteRol(rol.DataBeanProperties.IDRole, modalDeleteRol)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #modalModule>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <label>Nombre</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionName" name="nameModule" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Propósito</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionPurpose" name="purposeModule" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Link</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionLink" name="linkModule" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success" type="button" (click)="sendModule()">{{titleBS}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalMenu>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS2}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <label>Code</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionCode" name="nameCodeMenu" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Nombre</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionNameMenu" name="nameMenu" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Url</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionUrl" name="nameUrl" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success" type="button" (click)="sendMenu()">{{titleBS2}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalRol>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS3}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <label>Nombre</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionNameRol" name="nameRol" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Descripción</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionDesRol" name="descripRol" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Estado</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionState" name="stateRole" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success" type="button" (click)="sendRol()">{{titleBS3}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalAssignRol>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Asignar Rol</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <select class="form-control" [(ngModel)]="opcionModMenu" (change)="changeMenu()" name="selectorModule2">
+                        <option [ngValue]="undefined" hidden>{{selectorModMenu}}</option>
+                        <option [ngValue]="module.DataBeanProperties.IDApplicationType"
+                            *ngFor="let module of listModule">{{module.DataBeanProperties.Name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="datatable">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let menu of listMenuAux">
+                            <td>{{menu.DataBeanProperties.IDLn}}</td>
+                            <td>{{menu.DataBeanProperties.Name}}</td>
+                            <td>{{menu.DataBeanProperties.myState}}</td>
+                            <td>
+                                <button *ngIf="menu.DataBeanProperties.myIcon" title="Asignar Menú" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="addRole(menu.DataBeanProperties.IDLn)">
+                                    <i class="fas fa-square-full"></i>
+                                </button>
+                                <button *ngIf="menu.DataBeanProperties.myIcon2" title="Cancelar Menú" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="removeRole(menu.DataBeanProperties.IDLn)">
+                                    <i class="fas fa-check-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger" type="button" (click)="cerrar()">Cerrar</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalDeleteModule>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteModule()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #modalDeleteMenu>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteMenu()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #modalDeleteRol>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteRol()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>

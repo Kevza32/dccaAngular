@@ -1,0 +1,263 @@
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto mt-4">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Grupo de Trabajo
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10">
+    <div class="W-100">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="container">
+                            <nav class="nav nav-borders">
+                                <span class="nav-link" [ngClass]="{'active': vista === 1 }" id="1"
+                                    (click)="navId(1)">Gestion de grupos de trabajo</span>
+                                <span class="nav-link" [ngClass]="{'active': vista === 2 }" id="2"
+                                    (click)="navId(2)">Asignar usuario a grupo de trabajo</span>
+
+                                <span class="nav-link" [ngClass]="{'active': vista === 3 }" id="3"
+                                    (click)="navId(3)">Lista de usuarios por grupos de trabajo</span>
+                            </nav>
+                        </div>
+                        <div *ngIf="vista==1">
+
+                            <nav aria-label="breadcrumb" class="p-3">
+                                <ol class="breadcrumb mb-0 mt-4 alert-primary">
+                                    <li class="breadcrumb-item liraiz" *ngFor="let item of listAux"><a
+                                            (click)="getSelection(item.idValor, 'Editar')">{{item.valorData}}</a>
+                                    </li>
+                                </ol>
+                            </nav>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="p-3">
+                                        <button title="Agregar Unidades" class="btn btn-outline-green" type="button"
+                                            (click)="openUnidad(modalUnidad)" (click)="modifyUnidad(0, 'Crear')"
+                                            (click)="cleanUnit()">Agregar</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="list-group grupotabla">
+
+                                        <ul class="hijoss" *ngIf="viewData">
+                                            <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                                <i class="fas fa-spinner fa-spin"></i>
+                                            </div>
+                                            <li class="itemh list-group-item " *ngFor="let item of listTree">
+                                                <button title="Seleccionar Unidad"
+                                                    class="btn btn-datatable btn-icon btn-transparent-dark"
+                                                    type="button"
+                                                    (click)="getSelection(item.EnvolvedObject.DataBeanProperties.IDLn, 'Editar')">
+                                                    <i class="fas fa-check-square"></i>
+                                                </button>
+                                                <button title="Editar Unidad"
+                                                    class="btn btn-datatable btn-icon btn-transparent-dark"
+                                                    type="button" (click)="openUnidad(modalUnidad)"
+                                                    (click)="modifyUnidad(item.EnvolvedObject.DataBeanProperties.IDLn, 'Editar')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button title="Eliminar Unidad"
+                                                    class="btn btn-datatable btn-icon btn-transparent-dark"
+                                                    type="button"
+                                                    (click)="openDelete(item.EnvolvedObject.DataBeanProperties.IDLn, 'Eliminar', modalDelete)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                                <span
+                                                    class="txt_r">{{decodeval(item.EnvolvedObject.DataBeanProperties.Code)}}
+                                                    -
+                                                    {{decodeval(item.EnvolvedObject.DataBeanProperties.Name)}}</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="vista==2">
+                            <app-add-user-work-group></app-add-user-work-group>
+                        </div>
+                        <div *ngIf="vista==3">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="">Grupo de trabajo</label>
+                                        <input class="form-control" (click)="abrirUnidad()" [value]="nombreUni"
+                                            type="text">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cbxEstado">Estado</label>
+                                        <select name="" id="cbxEstado" class="form-control" [(ngModel)]="cbxestado">
+                                            <option value="0">Activo</option>
+                                            <option value="1">Inactivo</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-center">
+
+                                        <button class="btn btn-outline-success m-2"
+                                            (click)="listarUsuarios()">Buscar</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="card mt-5">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="cbxBussinessProccess">Usuarios en este grupo de
+                                                    trabajo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="col-12">
+                                            <div class="datatable">
+                                                <table class="table table-bordered table-hover" id="dataTable"
+                                                    width="100%" cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Id</th>
+                                                            <th>Cédula/Nit</th>
+                                                            <th>Nombre</th>
+                                                            <th>Grupo de trabajo</th>
+                                                            <th>Desde</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr *ngFor="let item of listaUsuarios">
+                                                            <!-- <td>{{item.DataBeanProperties |json}}</td> -->
+                                                            <td>{{item.DataBeanProperties.IDWorkGroupMember}}</td>
+                                                            <td>{{item.DataBeanProperties.AccountID}}</td>
+                                                            <td>{{item.DataBeanProperties.AccountName}}</td>
+                                                            <td>{{item.DataBeanProperties.FunctionalIDName}}</td>
+                                                            <td>{{item.DataBeanProperties.Since}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<app-modal-unit class="d-none" (idInputUnit)="getUnit($event)" (nameUnitINput)="getNameUnit($event)">
+</app-modal-unit>
+
+
+<ng-template #modalUnidad tabindex="1">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-6">
+                    <label>Code</label>
+                    <input class="form-control" type="number" [(ngModel)]="optionCode" name="code" />
+                </div>
+                <div class="col-6">
+                    <label>Nombre</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionName" name="nameUnit" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Correo de Notificación</label>
+                    <input class="form-control" type="text" [(ngModel)]="email" />
+                </div>
+            </div>
+
+            <br>
+
+            <div class="row">
+                <div class="col-12">
+                    <label>Descripción</label>
+                    <textarea class="form-control" type="text" [(ngModel)]="optionDescription"
+                        name="description"></textarea>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6 mt-2 mb-3">
+                    <label>Canal de Distribución</label>
+                    <div class=" input-group ">
+                        <input class="form-control" disabled=»disabled» type="text" placeholder={{nameChanel}} />
+                        <div class="input-group-append">
+                            <app-modal-search (account)="getAccount($event)"></app-modal-search>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mt-2 mb-3">
+                    <label>Jefe de área</label>
+                    <div class="input-group">
+                        <input class="form-control" disabled=»disabled» type="text" placeholder={{nameBoss}} />
+                        <div class="input-group-append">
+                            <app-modal-search (account)="getAccountBoos($event)"></app-modal-search>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mt-2 mb-3">
+                    <label>Ciudad</label>
+                    <div class="input-group">
+                        <input class="form-control" disabled=»disabled» type="text" placeholder={{nameCity}} />
+                        <app-modal-city (city)="getCity($event)"></app-modal-city>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cerrar</button>
+                <button class="btn btn-outline-success m-1" type="button" (click)="sendUnidad()">{{titleBS}}</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalDelete>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteUnit()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>

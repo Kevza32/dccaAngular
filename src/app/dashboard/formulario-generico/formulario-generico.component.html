@@ -1,0 +1,190 @@
+<div class="form-row">
+    <h5 class="w-100">Formulario Convenio</h5>
+    <div class="form-group col-md-6">
+        <label for="IDSector">Sector</label>
+        <select class="form-control" [(ngModel)]="beanAgreement.IDSector" id="IDSector" name="IDSector">
+            <option value="1">MINERO </option>
+            <option value="2">HIDROCARBUROS </option>
+            <option value="3">ENERGETICO </option>
+            <option value="4">CONSTRUCCION DE LA INFRAESTRUCTURA </option>
+        </select>
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtEmpresa">Empresa</label>
+        <input type="text" [(ngModel)]="txtEmpresa" name="txtEmpresa" readonly (click)="tipoSeleccion(1)"
+            id="txtEmpresa" class="form-control">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtRepresentanteLE">Razón social</label>
+        <input type="text" [(ngModel)]="beanAgreement.EntityName" name="txtRepresentanteLE" id="txtRepresentanteLE"
+            class="form-control" readonly>
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtRepresentanteLE">Representante Legal</label>
+        <input type="text" [(ngModel)]="txtRepresentanteLE" name="txtRepresentanteLE" id="txtRepresentanteLE"
+            class="form-control" readonly (click)="tipoSeleccion(2)">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtPersonaCon">Persona contacto</label>
+        <input type="text" [(ngModel)]="txtPersonaCon" name="txtPersonaCon" id="txtPersonaCon" class="form-control"
+            readonly (click)="tipoSeleccion(3)">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtConsecutivo">Número de convenio ministerio</label>
+        <input type="text" name="txtConsecutivo" id="txtConsecutivo" class="form-control"
+            [(ngModel)]="beanAgreement.Consecutive">
+    </div>
+    <!-- <div class="form-group col-md-6">
+        <label for="txtAnioVigen">Año vigencia</label>
+        <select id="txtAnioVigen" class="form-control" [(ngModel)]="beanAgreement.ValidityYear">
+            <option value="" disabled hidden></option>
+            <option *ngFor="let anio of listAnios" [ngValue]="anio">{{anio}}</option>
+        </select>
+    </div> -->
+    <div class="form-group col-md-6">
+        <label for="txtFechaSub">Fecha de inicio proceso</label>
+        <input type="date" name="txtFechaSub" id="txtFechaSub" class="form-control"
+            [(ngModel)]="beanAgreement.SubscriptionDate">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtFechaSub">Fecha de finalización proceso</label>
+        <input type="date" name="txtFechaSub" id="txtFechaSub" class="form-control"
+            [(ngModel)]="beanAgreement.FinishDate">
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtValorApoDinero">Valor aporte dinero</label>
+        <!-- <input mvndrMatCurrencyFormat [allowNegative]="false" [currencyCode]="'COP'" (blur)="updateUSAmount2($event)"
+        type="text" name="txtValorApoDinero" id="txtValorApoDinero" class="form-control InputP"
+        [(ngModel)]="beanAgreement.AgreementMoneyValue"> -->
+        <input currencyMask class="form-control InputP" [(ngModel)]="beanAgreement.AgreementMoneyValue" />
+
+    </div>
+    <div class="form-group col-md-6">
+        <label for="txtValorAporEsp">Valor aporte especie</label>
+        <!-- <input mvndrMatCurrencyFormat [allowNegative]="false" [currencyCode]="'COP'" (blur)="updateUSAmount($event)"
+            type="text" name="txtValorAporEsp" id="txtValorAporEsp" class="form-control InputP"
+            [(ngModel)]="beanAgreement.AgreementSpeciesValue"> -->
+        <input currencyMask class="form-control InputP" [(ngModel)]="beanAgreement.AgreementSpeciesValue" />
+    </div>
+</div>
+<button class="btn btn-success" *ngIf="beanAgreement.IDAgreement == null" (click)="validar()">Guardar</button>
+<button class="btn btn-success" *ngIf="beanAgreement.IDAgreement != null" (click)="editar()">Editar</button>
+
+<app-modal-search class="d-none" (account)="getAccountBoos($event)"></app-modal-search>
+
+<!-- 
+<div class="modal fade" bsModal #childModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Buscar tercero</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="cerrarM"
+                    (click)="childModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtCedula">Nit/cédula</label>
+                        <div class="input-group input-group-joined">
+                            <input class="form-control" type="text" placeholder="buscar" aria-label="Search" id=""
+                                [(ngModel)]="txtNit" name="buscar">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" (click)="buscarEmpre()"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12" *ngIf="this.cuenta != null">
+                        <div class="datatable">
+                            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Telefono</th>
+                                        <th>Dirección</th>
+                                        <th>Correo</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td class="letraP">{{cuenta.DataBeanProperties.Name1}}
+                                            {{cuenta.DataBeanProperties.Name2}}
+                                            {{cuenta.DataBeanProperties.Surname1}}
+                                            {{cuenta.DataBeanProperties.Surname2}}</td>
+                                        <td class="letraP">{{cuenta.DataBeanProperties.Tel}}</td>
+                                        <td class="letraP">{{cuenta.DataBeanProperties.Address}}</td>
+                                        <td class="letraP">{{cuenta.DataBeanProperties.eMail}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12" *ngIf="vistaBtnNewUser == true">
+                        <button class="btn btn-outline-primary" (click)="initBeanAccount(); thirdModal.show()"> Crear
+                            usuario nuevo</button>
+                    </div>
+                    <button class="btn btn-outline-success" [ngClass]="{'disabled': cuenta == null}"
+                        (click)="seleccionar()">Seleccionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- <div class="modal fade" bsModal #thirdModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Crear usuario</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="thirdModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtNit">Nit</label>
+                        <input id="txtNit" type="text" class="form-control" [(ngModel)]="beanAccount.Nit">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtName1">Primer nombre</label>
+                        <input id="txtName1" type="text" class="form-control" [(ngModel)]="beanAccount.Name1">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtName2">Segundo nombre</label>
+                        <input id="txtName2" type="text" class="form-control" [(ngModel)]="beanAccount.Name2">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtSurname1">Primer apellido</label>
+                        <input id="txtSurname1" type="text" class="form-control" [(ngModel)]="beanAccount.Surname1">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtSurname2">Segundo apellido</label>
+                        <input id="txtSurname2" type="text" class="form-control" [(ngModel)]="beanAccount.Surname2">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtAddress">Dirección</label>
+                        <input id="txtAddress" type="text" class="form-control" [(ngModel)]="beanAccount.Address">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtTel">Teléfono</label>
+                        <input id="txtTel" type="number" class="form-control" [(ngModel)]="beanAccount.Tel">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txteMail">Correo</label>
+                        <input id="txteMail" type="email" class="form-control" [(ngModel)]="beanAccount.eMail">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-danger" id="btnCerrarNewUser" (click)="thirdModal.hide()">Cerrar</button>
+                <button class="btn btn-outline-success" (click)="crearUsuario()">Crear</button>
+            </div>
+        </div>
+    </div>
+</div> -->

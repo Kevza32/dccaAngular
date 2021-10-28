@@ -1,0 +1,144 @@
+<div class="form-row">
+    <h5 class="w-100">Formulario Articulo Presupuestal Homologados por Beneficiario</h5>
+
+    <div class="form-group col-md-12" *ngIf="Historial == false">
+        <label for="cbxBeneficiario">Unidad Beneficiaria</label>
+        <select class="form-control" id="cbxBeneficiario" [(ngModel)]="idBeneficiario" (change)="listarTabla();">
+      <option disabled hidden></option>
+      <option *ngFor="let item of listaBeneficiarios" [ngValue]="item.DataBeanProperties" >
+        {{item.DataBeanProperties.UnidadMilitarName}}</option>
+    </select>
+    </div>
+
+    <ng-template #crearArticuloP>
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Añadir Artículo Presupuestal Homologado a Unidad Beneficiada {{idBeneficiario.UnidadMilitarName}}</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="cerrar()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="cbxCapApoyo">Capitulo de apoyo</label>
+                        <select class="form-control" id="cbxCapApoyo" [(ngModel)]="idCapApoyo">
+              <option disabled hidden></option>
+              <option *ngFor="let item of listaCap" [ngValue]="item.DataBeanProperties.IDChapterInvestment">
+                {{item.DataBeanProperties.Name}}</option>
+            </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cbxArticulo">Artículo presupuestal homologado</label>
+                        <select class="form-control" id="cbxArticulo" [(ngModel)]="idArticulo">
+              <option disabled hidden></option>
+              <option *ngFor="let item of listArticulos" [ngValue]="item.DataBeanProperties.IDBudgetArticle">
+                {{item.DataBeanProperties.Name}}</option>
+              <option></option>
+            </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtVD">Valor en dinero</label>
+                        <!-- <input mvndrMatCurrencyFormat [allowNegative]="false" [currencyCode]="'COP'" (blur)="updateUSAmount($event)"
+              type="text" id="txtVD" class="form-control InputP" [(ngModel)]="valorDinero"> -->
+                        <input currencyMask class="form-control InputP" [(ngModel)]="valorDinero" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtVE">Valor en especie</label>
+                        <!-- <input mvndrMatCurrencyFormat [allowNegative]="false" [currencyCode]="'COP'"
+              (blur)="updateUSAmount2($event)" type="text" id="txtVE" class="form-control InputP"
+              [(ngModel)]="valorEspecies"> -->
+                        <input currencyMask class="form-control InputP" [(ngModel)]="valorEspecies" />
+
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="validarArticuloP()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="col-md-12 mt-4">
+        <div class="datatable">
+            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Artículo Presupuestal Homologado</th>
+                        <th>Capitulo apoyo</th>
+                        <th>Valor en especie (A)</th>
+                        <th>Valor en dinero (B)</th>
+                        <th>Valor total</th>
+                        <th>Acciones <button class="btn btn-outline-green m-1" (click)="openCrear(crearArticuloP)"><i class="fa fa-plus " aria-hidden="true"></i></button></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let item of this.listaDeBeneciariosT">
+                        <td>{{item.DataBeanProperties.IDBeneficiaryInvestment}}</td>
+                        <td>{{item.DataBeanProperties.BudgetArticleName}}</td>
+                        <td>{{item.DataBeanProperties.ChapterName}}</td>
+                        <td class="InputP">{{item.DataBeanProperties.AgreementSpeciesValue | currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td class="InputP">{{item.DataBeanProperties.AgreementMoneyValue | currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td class="InputP">
+                            {{total(item.DataBeanProperties.AgreementSpeciesValue,item.DataBeanProperties.AgreementMoneyValue) | currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td>
+                            <button title="Eliminar Articulo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openDelete(item.DataBeanProperties.IDBeneficiaryInvestment, modalDelete)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+                            <button title="Editar Articulo" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEditar(crearArticuloP,item.DataBeanProperties);">
+                <i class="fa fa-pencil-alt"></i>
+              </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="BeanProcedureAction">
+            <button class="btn btn-outline-success" *ngIf="BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 " (click)="childModal.show()">Validar Formulario</button>
+        </div>
+
+    </div>
+</div>
+
+<ng-template #modalDelete>
+    <div class="modal-content sugundo_m">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+          aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteArticulo()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>
+
+<div class="modal fade" bsModal #childModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header ">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">Validar formulario</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarAprobacion" (click)="childModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDes"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprobar()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechazar()">Rechazar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

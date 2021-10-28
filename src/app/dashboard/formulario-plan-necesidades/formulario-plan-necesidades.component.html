@@ -1,0 +1,1234 @@
+<div class="form-row  d-flex justify-content-between">
+    <h5 class="">Formulario Plan de Inversiones</h5>
+    <div class="" *ngIf="BeanProcedureAction">
+        <button *ngIf="BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 " class="btn btn-success" id="btnArchivo" (click)="modalArchivo.show();listarAnexos()">Subir Plan de
+            Inversiones<i class="fas fa-upload"></i></button>
+        <button *ngIf="BeanProcedureAction.State == 1||BeanProcedureAction.State == 3" class="btn btn-success" id="btnArchivo" (click)="modalArchivo.show();listarAnexos()">Ver Archivo Plan de Inversiones<i
+                class="fas fa-eye"></i></button>
+    </div>
+    <div class="form-group col-md-12" *ngIf="Seguimiento == false && Liquidacion == false && !Historial ">
+        <label for="cbxBeneficiario">Unidad Beneficiaria</label>
+        <select class="form-control" id="cbxBeneficiario" [(ngModel)]="idBeneficiario" (change)="obtnenerBeneficiario();">
+            <option disabled hidden></option>
+            <option *ngFor="let item of listaBeneficiarios" [ngValue]="item.DataBeanProperties">
+                {{item.DataBeanProperties.UnidadMilitarName}}</option>
+        </select>
+    </div>
+    <div class="form-group col-md-12" *ngIf="Seguimiento == true || Liquidacion == true">
+        <label for="cbxBeneficiario">Unidad Beneficiaria</label>
+        <select class="form-control" id="cbxBeneficiario" [(ngModel)]="idBeneficiario" (change)="obtenerListaArticulosPporBeneficiary2();">
+            <option disabled hidden></option>
+            <option *ngFor="let item of listaBeneficiarios" [ngValue]="item.DataBeanProperties">
+                {{item.DataBeanProperties.Name}} {{item.DataBeanProperties.UnidadMilitarName}}</option>
+        </select>
+    </div>
+    <div class="form-group col-md-12">
+        <label for="cbxBeneficiario">Rubro homologado por capitulo de apoyo (Necesidad).</label>
+        <select class="form-control" id="cbxBeneficiario" [(ngModel)]="cbRubroCap" (change)="abrirTabla(cbRubroCap);">
+            <option disabled hidden [ngValue]="null"></option>
+            <option *ngFor="let item of tablaBeneInve" [ngValue]="item.DataBeanProperties">
+                {{item.DataBeanProperties.BudgetArticleName}} {{item.DataBeanProperties.ChapterName}}</option>
+        </select>
+    </div>
+    <div class="form-group col-md-12" *ngIf="cbRubroCap != null">
+        <label for="cbxModalidadD">Modalidad</label>
+        <select class="form-control" id="cbxModalidadD" [(ngModel)]="beanPlanNecesidad.Type" (change)="listarPlanes()">
+            <option selected hidden disabled [ngValue]="null"></option>
+            <option [ngValue]="0" [hidden]="cbRubroCap.AgreementMoneyValue == 0">Dinero {{cbRubroCap.AgreementMoneyValue
+                | currency:'COP':'symbol-narrow':'3.0'}}</option>
+            <option [ngValue]="1" [hidden]="cbRubroCap.AgreementSpeciesValue == 0">Especie
+                {{cbRubroCap.AgreementSpeciesValue| currency:'COP':'symbol-narrow':'3.0'}}</option>
+
+        </select>
+    </div>
+</div>
+<div class="form-row mt-5" *ngIf="beanPlanNecesidad.Type != null">
+    <div class="col-md-12 mt-4">
+        <div class="datatable" style="overflow-x:scroll;">
+            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th *ngIf="Ejecucion || Seguimiento || Liquidacion">¿Gestionado?</th>
+                        <th>Id</th>
+                        <th>Tipo</th>
+                        <th>Codigo</th>
+                        <th>Rubro Presupuestal</th>
+                        <th>Valor Total del Rubro</th>
+                        <th>Unidad Ejecutora</th>
+                        <th>Proveedor</th>
+                        <th>Lugar Entrega</th>
+                        <th>Aprobacion CEDE 5</th>
+                        <th>Aprobacion Ejecución</th>
+                        <th>Aprobacion Seguimiento</th>
+                        <th>Aprobacion Liquidación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of this.listaDePlanes; let index as i">
+                        <td class=" d-flex justify-content-center" *ngIf="Ejecucion || Seguimiento || Liquidacion" [ngClass]="{'bg-success': item.DataBeanProperties.IsCompliance, 'bg-danger ':item.DataBeanProperties.IsCompliance == false || item.DataBeanProperties.IsCompliance == null }">
+                            <button *ngIf="Ejecucion" title="SI" class="text-white btn-datatable btn-icon btn-transparent-dark" (click)="cambiarEstado(1,item.DataBeanProperties.IDNeedsPlan)" type="button">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                            </button>
+                            <button *ngIf="Ejecucion" title="NO" class="text-white btn-datatable btn-icon btn-transparent-dark" (click)="cambiarEstado(2,item.DataBeanProperties.IDNeedsPlan)" type="button">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                            <div *ngIf="Seguimiento || Liquidacion ">
+                                <button *ngIf=" item.DataBeanProperties.IsCompliance" title="SI" class="text-white btn-datatable btn-icon btn-transparent-dark" type="button">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                            </button>
+                            </div>
+                            <div *ngIf="Seguimiento || Liquidacion">
+                                <button *ngIf=" item.DataBeanProperties.IsCompliance == false" title="NO" class="text-white btn-datatable btn-icon btn-transparent-dark" type="button">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                            </div>
+                        </td>
+                        <td>{{item.DataBeanProperties.IDNeedsPlan}}</td>
+                        <td>{{listaAux[item.DataBeanProperties.ItemType]}}</td>
+                        <td>{{item.DataBeanProperties.BudgetCode}}</td>
+                        <td>{{item.DataBeanProperties.BudgetIDName}}</td>
+                        <td class="InputP">{{item.DataBeanProperties.TotalValue | currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td>{{item.DataBeanProperties.LogisticIDName}}</td>
+                        <td>{{item.DataBeanProperties.SupplierName}}</td>
+                        <td>{{item.DataBeanProperties.Address}}</td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.Approved" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.Approved == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.Approved " src="assets/img/rechazado-32.png" alt="">
+
+                        </td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.IsManageable" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.IsManageable == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.IsManageable && item.DataBeanProperties.IsManageable != null" src="assets/img/rechazado-32.png" alt="">
+
+                        </td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.Traced" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.Traced == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.Traced && item.DataBeanProperties.Traced != null" src="assets/img/rechazado-32.png" alt="">
+                        </td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.Liquidated" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.Liquidated == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.Liquidated && item.DataBeanProperties.Liquidated != null" src="assets/img/rechazado-32.png" alt="">
+                        </td>
+                        <td>
+                            <div class="m-0 p-0" *ngIf="!item.DataBeanProperties.Traced">
+                                <div *ngIf="BeanProcedureAction">
+                                    <button title="Ver Sub Rubros" id="btnVerDocs" *ngIf="BeanProcedureAction.Traced == null || BeanProcedureAction.Traced == false" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="llenarForm(item.DataBeanProperties);">
+                                        <i class="fas fa-angle-double-down" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <button title="Ver Sub Rubros" id="btnVerDocs" *ngIf="Historial" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="llenarForm(item.DataBeanProperties);">
+                                        <i class="fas fa-angle-double-down" aria-hidden="true"></i>
+                                    </button>
+                                <button title="Ver Sub Rubros" id="btnVerDocs" *ngIf="Historico == true" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="llenarForm(item.DataBeanProperties);">
+                                    <i class="fas fa-angle-double-down" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Seguimiento" title="Abrir Aprobación Seguimiento" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="aprobar.show(); beanPlanNecesidad = item.DataBeanProperties">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Ejecucion" title="Ver Estado de la aprobación Seguimiento" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="modalAprobacion.show(); beanPlanNecesidad = item.DataBeanProperties">
+                                    <i class=" fas fa-comment" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Ejecucion || Seguimiento || Historial" title="Ver Archivos" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="thirdModal.show(); abrirListaDocs(item.DataBeanProperties);documentosLleandosAttach(item.DataBeanProperties.IDNeedsPlan);">
+                                    <i class="fas fa-file-archive"></i>
+                                </button>
+                                <div *ngIf="BeanProcedureAction">
+                                    <button title="Abrir Aprobación Ejecucion" *ngIf="BeanProcedureAction.State == 1||BeanProcedureAction.State == 3" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="aprobarPlanEjecucion.show(); beanPlanNecesidad = item.DataBeanProperties">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <button *ngIf="item.DataBeanProperties.ManageableDate && Ejecucion == false && Seguimiento==false" title="Ver Estado de la aprobación Ejecucion" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="modalAprobacionPlanEjecucion.show(); beanPlanNecesidad = item.DataBeanProperties">
+                                    <i class=" fas fa-comment" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <div class="m-0 p-0" *ngIf="item.DataBeanProperties.Traced">
+
+                                <button title="Ver Sub Rubros" id="btnVerDocs" *ngIf="BeanProcedureAction.Traced == null || BeanProcedureAction.Traced == false" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="llenarForm(item.DataBeanProperties);">
+                                    <i class="fas fa-angle-double-down" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Liquidacion" title="Abrir Aprobación Liquidacion" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="aprobarPlanLiqui.show(); beanPlanNecesidad = item.DataBeanProperties">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Ejecucion" title="Ver Estado de la aprobación Seguimiento" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="modalAprobacionLi.show(); beanPlanNecesidad = item.DataBeanProperties">
+                                    <i class=" fas fa-comment" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Ejecucion || Seguimiento || Liquidacion" title="Ver Archivos" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="thirdModal.show(); abrirListaDocs(item.DataBeanProperties);documentosLleandosAttach(item.DataBeanProperties.IDNeedsPlan);">
+                                    <i class="fas fa-file-archive"></i>
+                                </button>
+                            </div>
+                            <!-- *ngIf="BeanProcedureAction.State == 1||BeanProcedureAction.State == 3" -->
+
+                            <!-- *ngIf="item.DataBeanProperties.Traced && item.DataBeanProperties.TracedDate" -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="form-row mt-5" *ngIf="listaSubPlanes != null ">
+    <div class="col-md-12 mt-4">
+        <div class="datatable" style="overflow-x:scroll;">
+            <table class="table table-bordered table-hover" style="overflow-x:scroll;" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th *ngIf="Ejecucion || Seguimiento || Liquidacion">¿Gestionado?</th>
+                        <th>Id</th>
+                        <th>Codigo</th>
+                        <th>Rubro Presupuestal</th>
+                        <th>Valor del Rubro</th>
+                        <th>Descripción de la necesidad</th>
+                        <th>Unidad de medida</th>
+                        <th>Cantidad Minima</th>
+                        <th>Cantidad Real</th>
+                        <th>Observaciones</th>
+                        <th>Aprobación Ejecución</th>
+                        <th>Aprobación Seguimiento</th>
+                        <th>Aprobacion Liquidación</th>
+                        <th>Acciones
+                            <div *ngIf="BeanProcedureAction">
+                                <button *ngIf="disponible>0 && BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5" class="btn btn-outline-success" (click)="quintoModal.show()">
+                                <i class="fa fa-plus" aria-hidden="true"></i> </button>
+                            </div>
+                            <div *ngIf="Historial">
+                                <button *ngIf="disponible>0" class="btn btn-outline-success" (click)="quintoModal.show()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> </button>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let item of this.listaSubPlanes">
+                        <!-- <td>{{item.DataBeanProperties|json}}</td> -->
+                        <td *ngIf="Ejecucion || Seguimiento || Liquidacion" class=" d-flex justify-content-center" [ngClass]="{'bg-success': item.DataBeanProperties.IsCompliance, 'bg-danger':item.DataBeanProperties.IsCompliance == false ||item.DataBeanProperties.IsCompliance == null }">
+                            <button *ngIf="Ejecucion" title="SI" class="text-white btn-datatable btn-icon btn-transparent-dark" (click)="cambiarEstadoRubro(1,item.DataBeanProperties.IDInvestmentPlan)" type="button">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                            </button>
+                            <button *ngIf="Ejecucion" title="NO" class="text-white btn-datatable btn-icon btn-transparent-dark" (click)="cambiarEstadoRubro(2,item.DataBeanProperties.IDInvestmentPlan)" type="button">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+
+                            <div *ngIf="Seguimiento || Liquidacion">
+                                <button *ngIf="item.DataBeanProperties.IsCompliance" title="SI" class="text-white btn-datatable btn-icon btn-transparent-dark" type="button">
+                                <i class="fas fa-check" aria-hidden="true"></i>
+                            </button>
+                            </div>
+                            <!-- ||item.DataBeanProperties.IsCompliance == null -->
+
+                            <div *ngIf="Seguimiento || Liquidacion">
+                                <button *ngIf=" !item.DataBeanProperties.IsCompliance" title="NO" class="text-white btn-datatable btn-icon btn-transparent-dark" type="button">
+                                <i class="fa fa-times" aria-hidden="true"></i>
+                            </button>
+                            </div>
+
+
+                        </td>
+                        <td>{{item.DataBeanProperties.IDInvestmentPlan}}</td>
+
+                        <td>{{item.DataBeanProperties.BudgetCode}}</td>
+                        <td>{{item.DataBeanProperties.BudgetIDName}}</td>
+                        <td class="InputP">{{item.DataBeanProperties.TotalValue | currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td>{{item.DataBeanProperties.Justification}}</td>
+                        <td>{{item.DataBeanProperties.MeasurementUnit}}</td>
+                        <td>{{item.DataBeanProperties.MinQuantity}}</td>
+                        <td>{{item.DataBeanProperties.RealQuantity}}</td>
+                        <td>{{item.DataBeanProperties.Observations}}</td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.IsManageable" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.IsManageable == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.IsManageable && item.DataBeanProperties.IsManageable != null" src="assets/img/rechazado-32.png" alt="">
+                        </td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.Traced" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.Traced == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.Traced && item.DataBeanProperties.Traced != null" src="assets/img/rechazado-32.png" alt="">
+                        </td>
+                        <td>
+                            <img *ngIf="item.DataBeanProperties.Liquidated" src="assets/img/aprobado-32.png" alt="">
+                            <img *ngIf="item.DataBeanProperties.Liquidated == null" src="assets/img/xaprobar-32.png" alt="">
+                            <img *ngIf="!item.DataBeanProperties.Liquidated && item.DataBeanProperties.Liquidated != null" src="assets/img/rechazado-32.png" alt="">
+                        </td>
+                        <td>
+                            <div class="m-0 p-0" *ngIf="!item.DataBeanProperties.Traced">
+                                <button title="Ver documento" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="beanPlanNecesidad2 = item.DataBeanProperties;quintoModal.show()">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button title="Eliminar Artículo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="eliminarSubPlan(item.DataBeanProperties.IDInvestmentPlan)">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                                <button *ngIf="Ejecucion || Seguimiento || Historial" title="Archivo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="thirdModalInvestment.show(); beanPlanNecesidad2 = item.DataBeanProperties;  abrirListaDocsIn(item.DataBeanProperties);documentosLleandosAttachInves(item.DataBeanProperties.IDInvestmentPlan);">
+                                    <i class="fas fa-file-archive"></i>
+                                </button>
+                                <button *ngIf="Seguimiento" title="Abrir Aprobación Seguimiento" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="aprobarInvestment.show(); beanPlanNecesidad2 = item.DataBeanProperties">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Ejecucion" title="Ver Estado de la aprobación Seguimiento" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="modalAprobacion.show(); beanPlanNecesidad2 = item.DataBeanProperties">
+                                    <i class=" fas fa-comment" aria-hidden="true"></i>
+                                </button>
+                                <div *ngIf="BeanProcedureAction">
+                                    <button title="Abrir Aprobación Ejecucion" *ngIf="BeanProcedureAction.State == 1||BeanProcedureAction.State == 3" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="aprobarInvestmentEjecucion.show(); beanPlanNecesidad2 = item.DataBeanProperties">
+                                         <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                                <button *ngIf="item.DataBeanProperties.ManageableDate && Ejecucion == false && Seguimiento==false" title="Ver Estado de la aprobación Ejecucion" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="modalAprobacionInvestmentEjecucion.show(); beanPlanNecesidad2 = item.DataBeanProperties">
+                                    <i class=" fas fa-comment" aria-hidden="true"></i>
+                                </button>
+                                <!-- <button *ngIf="Ejecucion" title="Plan Rubro Lleno"
+                                    class=" btn-datatable btn-icon btn-transparent-dark"
+                                    (click)="cambiarEstadoRubro(1,item.DataBeanProperties.IDInvestmentPlan)"
+                                    type="button">
+                                    <i class="fas fa-certificate" aria-hidden="true"></i>
+                                </button>
+                                <button *ngIf="Ejecucion" title="Plan Rubro Por llenar"
+                                    class=" btn-datatable btn-icon btn-transparent-dark"
+                                    (click)="cambiarEstadoRubro(2,item.DataBeanProperties.IDInvestmentPlan)"
+                                    type="button">
+                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                </button> -->
+
+                            </div>
+                            <!-- {{item.DataBeanProperties|json}}
+                            <div class="m-0 p-0" *ngIf="item.DataBeanProperties.Traced||item.DataBeanProperties.Traced"> -->
+
+                            <div class="m-0 p-0" *ngIf="item.DataBeanProperties.Traced">
+                                <button *ngIf="Ejecucion || Seguimiento || Liquidacion" title="Archivo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="thirdModalInvestment.show(); beanPlanNecesidad2 = item.DataBeanProperties;  abrirListaDocsIn(item.DataBeanProperties);documentosLleandosAttachInves(item.DataBeanProperties.IDInvestmentPlan);">
+                                    <i class="fas fa-file-archive"></i>
+                                </button>
+                                <button *ngIf="Ejecucion" title="Ver Estado de la aprobación Liquidación" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="modalAprobacionLiInv.show(); beanPlanNecesidad2 = item.DataBeanProperties">
+                                    <i class=" fas fa-comment" aria-hidden="true"></i>
+                                </button>
+
+                                <button title="Abrir Aprobación Liquidacion" *ngIf="Liquidacion" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="aprobarInveLiqui.show(); beanPlanNecesidad2 = item.DataBeanProperties">
+                                    <i class="fa fa-eye" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                            <!-- aprobarInvestmentEjecucion -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- {{BeanProcedureAction.State}} -->
+<!-- ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 -->
+<div>
+    <div *ngIf="BeanProcedureAction">
+        <button class="btn btn-outline-success m-4" *ngIf=" BeanProcedureAction.State == 0 " (click)="childModal.show()">Validar
+            Formulario</button>
+    </div>
+    <button class="btn btn-outline-primary m-4" *ngIf="idBeneficiario" (click)="generarxls()">Descargar plan de inversión en
+            excel</button>
+</div>
+
+
+
+<app-modal-investment class="d-none" (idInputUnit)="getInvestment($event)" (nameUnitINput)="getNameInvestment($event)">
+</app-modal-investment>
+
+<!-- Modal para validar el formulario -->
+<div class="modal fade" bsModal #childModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header ">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">Validar formulario</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarAprobacion" (click)="childModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDes"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprobarDocumento()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechazarDocumento()">Rechazar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para mirar los soporte de seguimiento -->
+<div class="modal fade" bsModal #thirdModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Lista de soportes por Rubro</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="thirdModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="datatable" style="overflow-x:scroll;">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Nombre de archivo</th>
+                                <th>Tipo Archivo</th>
+                                <th>Archivo</th>
+                                <th>Observaciones</th>
+                                <th>Fecha de carga</th>
+                                <th>Pre Aprobación</th>
+                                <th>
+                                    <div>
+                                        <label>&nbsp;&nbsp;</label>
+                                        <button type="button" class="btn btn-outline-green" (click)="cuartoModal.show()">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listaDeCocumentosB">
+                                <!-- <td>{{item.DataBeanProperties|json}}</td> -->
+                                <td>{{item.DataBeanProperties.DocumentName}}</td>
+                                <td>{{item.DataBeanProperties.DocumentTypeName}}</td>
+
+                                <td><a class="w-100" href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}" target="_blank">{{item.DataBeanProperties.Media}}</a>
+                                </td>
+                                <td>{{item.DataBeanProperties.Observations}}</td>
+                                <td>{{item.DataBeanProperties.Since}}</td>
+                                <td> <img *ngIf="item.DataBeanProperties.IsCompliance" src="assets/img/aprobado-32.png" alt="">
+                                    <img *ngIf="item.DataBeanProperties.IsCompliance == null && item.DataBeanProperties.ComplianceDate == null" src="assets/img/xaprobar-32.png" alt="">
+                                    <img *ngIf="!item.DataBeanProperties.IsCompliance && item.DataBeanProperties.ComplianceDate != null" src="assets/img/rechazado-32.png" alt="">
+                                </td>
+
+                                <td>
+                                    <!-- {{Ejecucion}} {{Seguimiento}} -->
+                                    <button *ngIf="Seguimiento || Liquidacion" title="Pre aprobar documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEliminarDocumeto(item.DataBeanProperties); preaprobarPlanEje.show()">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button *ngIf="Ejecucion " title="Pre aprobar documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEliminarDocumeto(item.DataBeanProperties); modalPreAprobacionEjePlan.show()">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
+                                    <button title="Eliminar documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" *ngIf="Ejecucion && !item.DataBeanProperties.IsCompliance" (click)="abrirEliminarDocumeto(item.DataBeanProperties); eliminarDocument.show()">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </button>
+                                    <button title="Eliminar documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" *ngIf="Seguimiento || Liquidacion && !item.DataBeanProperties.IsCompliance" (click)="abrirEliminarDocumeto(item.DataBeanProperties); eliminarDocument.show()">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para cargar documentos seguimiento -->
+<div class="modal fade" bsModal #cuartoModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Cargar archivo</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCloseCM" (click)="cuartoModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="">Tipo Archivo</label>
+                        <select type="text" id="" class="form-control" [(ngModel)]="beanNeedsPlanAttach.IDNeedsPlanDocument">
+                            <option value=""></option>
+                            <option [value]="item.DataBeanProperties.IDNeedsPlanDocument"
+                                *ngFor="let item of listaDeDocumentos">{{item.DataBeanProperties.Name}} --
+                                {{item.DataBeanProperties.DocumentTypeName}}</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="fileS" class="btn btn-success">Subir archivo <i
+                                    class="fas fa-upload"></i></label>
+                            <input type="file" id="fileS" (change)="cargarFile($event.target.files)">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <a class="w-100" href="{{getUrl(beanNeedsPlanAttach.MediaContext, this.beanNeedsPlanAttach.Media)}}" target="_blank"><small>{{nombreArchivo}}</small> </a>
+                        </div>
+                        <div *ngIf="this.beanNeedsPlanAttach.IDNeedsPlan" class="form-group col-md-12">
+                            <label for="txtObservaciones">Observaciones</label>
+                            <textarea id="txtObservaciones" [(ngModel)]="beanNeedsPlanAttach.Observations" class="form-control"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-outline-success" (click)="actualizarAttech()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para eliminar documentos -->
+<div class="modal fade " bsModal #eliminarDocument="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm  modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar</h5>
+                <button class="close" type="button" id="btnCerrarElim" (click)="eliminarDocument.hide()" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="m-1 btn btn-outline-success" (click)="confirmEliminar();eliminarDocument.hide()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal modal para llenar surubros -->
+<div class="modal fade" bsModal #quintoModal="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left" *ngIf="beanBeneficiaryInvestment != null">
+                    Formulario Plan de Inversiones: {{beanBeneficiaryInvestment.ChapterName}}</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarQuintoModal" (click)="quintoModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-2 d-none">
+                    <label>Buscar unidad</label>
+                    <br>
+                    <app-modal-unit (idInputUnit)="getUnit($event)" (nameUnitINput)="getNameUnit($event)">
+                    </app-modal-unit>
+                </div>
+                <div class="form-row mt-5" *ngIf="beanPlanNecesidad.IDNeedsPlan != null">
+
+                    <div class="form-group col-md-6">
+                        <label for="txtValortotal">Valor Total del Rubro</label>
+                        <input currencyMask readonly class="form-control InputP" [(ngModel)]="beanPlanNecesidad.TotalValue" />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="cbxModalidad">Bien / Servicio</label>
+                        <select class="form-control" id="cbxModalidad" disabled [(ngModel)]="beanPlanNecesidad.ItemType">
+                            <option [ngValue]="2">Bien</option>
+                            <option [ngValue]="3">Servicio</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6" *ngIf="beanPlanNecesidad.Type == 0">
+                        <label for="txtUnidadCL">Unidad Ejecutora</label>
+                        <select disabled [(ngModel)]="beanPlanNecesidad.IDLogisticUnit" class="form-control">
+                            <option value="" hidden diasabled></option>
+                            <option *ngFor="let item of listaUnidadesLog"
+                                [value]="item.DataBeanProperties.IDLogisticUnit">{{item.DataBeanProperties.Name}}
+                            </option>
+
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6" *ngIf="beanPlanNecesidad.Type != 0 && beanPlanNecesidad2">
+                        <label for="txtUnidadCL">Proveedor</label>
+                        <input type="text" [(ngModel)]="txtEmpresa" name="txtEmpresa" readonly id="txtEmpresa" class="form-control">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtAdress">Lugar de Entrega (Dirección exacta)</label>
+                        <input type="text" id="txtAdress" class="form-control" disabled [(ngModel)]="beanPlanNecesidad.Address">
+                    </div>
+                    <app-modal-search class="d-none" (account)="getAccountBoos($event)"></app-modal-search>
+
+                    <div class="form-group col-md-6">
+                        <label for="txtCodigoR">Código Rubro Presupuestal</label>
+                        <input type="text" id="txtCodigoR" readonly (click)="obtenerBudget()" class="form-control" [(ngModel)]="beanPlanNecesidad2.BudgetCode">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtDCodigoR">Descripción Rubro Presupuestal</label>
+                        <input type="text" id="txtDCodigoR" readonly (click)="obtenerBudget()" class="form-control" [(ngModel)]="beanPlanNecesidad2.BudgetIDName">
+                    </div>
+                    <app-modal-rubro-presupuestal-filtrado (BeanBudget)="getBudget($event)" class="d-none" [idInputBudgetID]="beanPlanNecesidad.BudgetID"></app-modal-rubro-presupuestal-filtrado>
+
+                    <div class="form-group col-md-6">
+                        <label for="cbxBeneficiario">Necesidad</label>
+                        <select class="form-control" disabled id="cbxBeneficiario" [(ngModel)]="cbRubroCap">
+                            <option hidden [ngValue]="null"></option>
+                            <option *ngFor="let item of tablaBeneInve" [ngValue]="item.DataBeanProperties">
+                                {{item.DataBeanProperties.BudgetArticleName}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtValortotal">Valor del Rubro</label>
+                        <input currencyMask class="form-control InputP" [(ngModel)]="beanPlanNecesidad2.TotalValue" />
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtJustificacion">Descripción de la Necesidad</label>
+                        <textarea type="text" id="txtJustificacion" class="form-control" [(ngModel)]="beanPlanNecesidad2.Justification"></textarea>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtMeasurement">Unidad de medida</label>
+                        <input type="text" id="txtMeasurement" class="form-control" [(ngModel)]="beanPlanNecesidad2.MeasurementUnit">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtMinQ">Cantidad minima</label>
+                        <input type="number" id="txtMinQ" class="form-control" [(ngModel)]="beanPlanNecesidad2.MinQuantity">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtRealQ">Cantidad real</label>
+                        <input type="number" id="txtRealQ" class="form-control" [(ngModel)]="beanPlanNecesidad2.RealQuantity">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtUnidad">Lugar de entrega (Dirección exacta)</label>
+                        <input type="text" disabled id="txtUnidad" class="form-control" disabled [(ngModel)]="beanPlanNecesidad.Address">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtObservavaciones">Observaciones</label>
+                        <textarea type="text" id="txtObservavaciones" class="form-control" [(ngModel)]="beanPlanNecesidad2.Observations"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-outline-success m-1" (click)="validarSub()">Guardar</button>
+
+                    <!-- <button type="button" class="btn btn-outline-success m-1" (click)="validarPlan()">Guardar</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de archivos para cargar Anexos-->
+<div class="modal fade " *ngIf="BeanProcedureAction" bsModal #modalArchivo="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h6 class="modal-title pull-left" *ngIf="BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 ">
+                    Cargar documento</h6>
+                <h6 class="modal-title pull-left" *ngIf="BeanProcedureAction.State == 1 ">Ver anexo</h6>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalArchivo.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row" *ngIf="BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 || BeanProcedureAction.State == 1||BeanProcedureAction.State == 3">
+                    <div class="col-12">
+                        <small class="text-danger">*Se recomienda subir archivo .xls o .rar, tamaño recomendado
+                            50mb</small>
+                    </div>
+                    <div class="col-12">
+                        <label for="AnexoS" class="btn btn-success">Anexos archivo <i class="fas fa-upload"></i></label>
+                        <input type="file" id="AnexoS" (change)="cargarAnexo($event.target.files)">
+                        <br>
+                        <a href="{{getUrl(anexoMediaContext, anexoMedia)}}" target="_blank"><small>{{anexoMedia}}</small> </a>
+                    </div>
+                    <div class="col-12">
+                        <label for="txtNombre">Nombre</label>
+                        <input type="text" class="form-control" id="txtNombre" [(ngModel)]="txtNombre">
+                    </div>
+                    <div class="col-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea id="txtDescripcion" class="form-control" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-success mt-2" (click)="anadirAnexo()">Guardar anexo</button>
+                </div>
+                <div class="form-row">
+                    <div class="datatable">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Descripcion</th>
+                                    <th>Archivo</th>
+                                    <th *ngIf="BeanProcedureAction.State == 1||BeanProcedureAction.State == 3">
+                                        Acciones</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <!-- *ngIf="BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 " -->
+                                <tr *ngFor="let item of listaAnexos">
+                                    <td>{{item.DataBeanProperties.Name}}</td>
+                                    <td>{{item.DataBeanProperties.Description}}</td>
+                                    <td><a href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}" target="_blank">{{item.DataBeanProperties.Media}}</a></td>
+                                    <td *ngIf="BeanProcedureAction.State == 1||BeanProcedureAction.State == 3">
+                                        <button title="eliminar anexo" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="eliminarAnexo(item.DataBeanProperties.IDAttachedDocument)">
+                                            <i class="fas fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" bsModal #thirdModalInvestment="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Lista de soportes por Subrubro</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="thirdModalInvestment.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="datatable" style="overflow-x:scroll;">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <!-- <th>id</th> -->
+                                <th>Nombre Archivo</th>
+                                <th>Tipo Archivo</th>
+                                <th>Archivo</th>
+                                <th>Observaciones</th>
+                                <th>Fecha de carga</th>
+                                <th>Pre Aprobación</th>
+                                <th>
+                                    <div>
+                                        <label>&nbsp;&nbsp;</label>
+                                        <button type="button" class="btn btn-outline-green" (click)="cuartoModalInvestment.show()">
+                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listaDeCocumentosB">
+                                <!-- <td>{{item.DataBeanProperties.IDInvestmentPlanAttached}}</td> -->
+                                <td>{{item.DataBeanProperties.DocumentName}}</td>
+                                <td>{{item.DataBeanProperties.DocumentTypeName}}</td>
+                                <td><a class="w-100" href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}" target="_blank">{{item.DataBeanProperties.Media}}</a>
+                                </td>
+                                <td>{{item.DataBeanProperties.Observations}}</td>
+                                <td>{{item.DataBeanProperties.Since}}</td>
+                                <td> <img *ngIf="item.DataBeanProperties.IsCompliance" src="assets/img/aprobado-32.png" alt="">
+                                    <img *ngIf="item.DataBeanProperties.IsCompliance == null && item.DataBeanProperties.ComplianceDate == null" src="assets/img/xaprobar-32.png" alt="">
+                                    <img *ngIf="!item.DataBeanProperties.IsCompliance && item.DataBeanProperties.ComplianceDate != null" src="assets/img/rechazado-32.png" alt="">
+                                </td>
+
+                                <td>
+
+                                    <button *ngIf="Seguimiento || Liquidacion" title="Pre aprobar documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEliminarDocumeto(item.DataBeanProperties); preaprobarPlanInv.show()">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    <button *ngIf="Ejecucion" title="Pre aprobar documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEliminarDocumeto(item.DataBeanProperties); modalPreAprobacionEjeInv.show()">
+                                        <i class="fas fa-comment"></i>
+                                    </button>
+                                    <button title="Ver documentos" id="btnVerDocs" *ngIf="Ejecucion && !item.DataBeanProperties.IsCompliance" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEliminarDocumeto(item.DataBeanProperties); eliminarDocumentInvest.show()">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </button>
+                                    <button title="Ver documentos" id="btnVerDocs" *ngIf="Seguimiento || Liquidacion && !item.DataBeanProperties.IsCompliance" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirEliminarDocumeto(item.DataBeanProperties); eliminarDocumentInvest.show()">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para cargar documentos seguimiento -->
+<div class="modal fade" bsModal #cuartoModalInvestment="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Cargar archivo</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCloseCM" (click)="cuartoModalInvestment.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="">Tipo Archivo</label>
+                        <select type="text" id="" class="form-control" [(ngModel)]="beanNeedsPlanAttachInvestment.IDNeedsPlanDocument">
+                            <option value=""></option>
+                            <option [value]="item.DataBeanProperties.IDNeedsPlanDocument"
+                                *ngFor="let item of listaDeDocumentos">{{item.DataBeanProperties.Name}} --
+                                {{item.DataBeanProperties.DocumentTypeName}}</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="fileSI" class="btn btn-success">Subir archivo <i
+                                    class="fas fa-upload"></i></label>
+                            <input type="file" id="fileSI" (change)="cargarFileInvestment($event.target.files)">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <a class="w-100" href="{{getUrl(beanNeedsPlanAttachInvestment.MediaContext, this.beanNeedsPlanAttachInvestment.Media)}}" target="_blank"><small>{{nombreArchivo}}</small> </a>
+                        </div>
+                        <div *ngIf="this.beanNeedsPlanAttachInvestment.IDInvestmentPlan > 0" class="form-group col-md-12">
+                            <label for="txtObservaciones">Observaciones</label>
+                            <textarea id="txtObservaciones" [(ngModel)]="beanNeedsPlanAttachInvestment.Observations" class="form-control"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <button class="btn btn-outline-success" (click)="actualizarAttechInvestment();cuartoModalInvestment.hide()">Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade " bsModal #eliminarDocumentInvest="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm  modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar</h5>
+                <button class="close" type="button" id="btnCerrarElim" (click)="eliminarDocumentInvest.hide()" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="m-1 btn btn-outline-success" (click)="confirmEliminarInvest();eliminarDocumentInvest.hide()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--aprobaciones Ejecucion Plan -->
+
+<div class="modal fade " bsModal #aprobarPlanEjecucion="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Aprobar o Rechazar Plan de Invesión Ejecución</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="aprobarPlanEjecucion.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprPEjecucion(); aprobarPlanEjecucion.hide()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="recPEjecucion(); aprobarPlanEjecucion.hide()">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" bsModal #modalAprobacionPlanEjecucion="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación Ejecución</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalAprobacionPlanEjecucion.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="beanPlanNecesidad.ManageableObservations"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="beanPlanNecesidad.IDAccountManageable">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{beanPlanNecesidad.ManageableDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--aprobaciones Ejecucion InvestMent -->
+<div class="modal fade " bsModal #aprobarInvestmentEjecucion="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Aprobar o Rechazar Plan de Invesión por rubro Ejecución</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="aprobarInvestmentEjecucion.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprInEjecucion(); aprobarInvestmentEjecucion.hide()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="recInjecucion(); aprobarInvestmentEjecucion.hide()">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" bsModal #modalAprobacionInvestmentEjecucion="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalAprobacionInvestmentEjecucion.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="beanPlanNecesidad2.ManageableObservations"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="beanPlanNecesidad2.IDAccountManageable">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{beanPlanNecesidad2.ManageableDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--aprobaciones Seguimiento investment -->
+<div class="modal fade " bsModal #aprobarInvestment="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Aprobar o Rechazar Plan de Invesión por Rubro</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="aprobarInvestment.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprobarPlanInvestement();aprobarInvestment.hide()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechazarPlanInvestment();aprobarInvestment.hide()">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" bsModal #modalAprobacionInvestmentSeguimiento="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalAprobacionInvestmentSeguimiento.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="beanPlanNecesidad2.TracedObservations"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="beanPlanNecesidad2.TracerName">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{beanPlanNecesidad2.TracedDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- aprobaciones Seguimiento Plan-->
+<div class="modal fade" bsModal #modalAprobacion="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalAprobacion.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="beanPlanNecesidad.TracedObservations"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="beanPlanNecesidad.TracerName">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{beanPlanNecesidad.TracedDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " bsModal #aprobar="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Aprobar o Rechazar Plan de Invesión</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="aprobar.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprobarPlanSeguimiento()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechazarPlanSeguimiento()">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- aprobaciones Liquidacion Plan-->
+
+<div class="modal fade" bsModal #modalAprobacionLi="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación Liquidación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalAprobacionLi.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="beanPlanNecesidad.LiquidatedObservations"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="beanPlanNecesidad.IDAccountLiquidated">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{beanPlanNecesidad.LiquidatedDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " bsModal #aprobarPlanLiqui="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Aprobar o Rechazar Plan de Invesión Liquidacion</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="aprobarPlanLiqui.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aproPLiqui();aprobarPlanLiqui.hide()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechaPLiqui();aprobarPlanLiqui.hide()">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- aprobacion liquidacion Investement -->
+<div class="modal fade" bsModal #modalAprobacionLiInv="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación Liquidación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalAprobacionLiInv.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="beanPlanNecesidad2.LiquidatedObservations"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="beanPlanNecesidad2.IDAccountLiquidated">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{beanPlanNecesidad2.LiquidatedDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " bsModal #aprobarInveLiqui="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Aprobar o Rechazar Plan de Invesión Liquidacion</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="aprobarInveLiqui.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aproILiqui();aprobarInveLiqui.hide()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechaILiqui();aprobarInveLiqui.hide()">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- preaprobacion Seguimiento Plan -->
+<div class="modal fade" bsModal #modalPreAprobacionEjePlan="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m" *ngIf="this.BeanDocument">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación Liquidación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalPreAprobacionEjePlan.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="BeanDocument.ComplianceObs"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="BeanDocument.ComplianceAccountName">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{BeanDocument.ComplianceDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " bsModal #preaprobarPlanEje="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Pre Aprobar o Rechazar Documento</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="preaprobarPlanEje.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="preAproAtachedSeguimiento(); preaprobarPlanEje.hide();">Pre
+                        Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="preRechAtachedSeguimiento(); preaprobarPlanEje.hide();">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- preaprobacion Seguimiento Invesment -->
+<div class="modal fade" bsModal #modalPreAprobacionEjeInv="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name3">
+    <div class="modal-dialog modal-xl p-5">
+        <div class="modal-content sugundo_m" *ngIf="this.BeanDocument">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name3" class="modal-title pull-left">Estado de Aprobación Liquidación</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalPreAprobacionEjeInv.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" disabled [(ngModel)]="BeanDocument.ComplianceObs"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Aprobador</label>
+                        <input class="form-control" id="txtDescripcion2" disabled [(ngModel)]="BeanDocument.ComplianceAccountName">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Fecha</label> {{BeanDocument.ComplianceDate}}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " bsModal #preaprobarPlanInv="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">
+                    Pre Aprobar o Rechazar Documento</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrar" (click)="preaprobarPlanInv.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDescripcion"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="preAproAtachedInvSeguimiento(); preaprobarPlanInv.hide();">Pre
+                        Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="preRechAtachedInvSeguimiento(); preaprobarPlanInv.hide();">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+.imgS{
+    width: 100%;
+}
+.ancho{
+    width: 350px;
+}
+
+@media (max-width: 426px) {
+    .ancho {
+      width: 95%;
+    }
+  }
+
+.w-35{
+    width: 35%;
+}
+.texto{
+    font-size: 13px;
+}

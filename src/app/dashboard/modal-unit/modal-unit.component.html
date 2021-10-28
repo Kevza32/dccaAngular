@@ -1,0 +1,60 @@
+<button class="btn btn-outline-green" id="btnModalUnidad" (click)="openUnidad(modalUnit)">Buscar</button>
+
+<ng-template #modalUnit>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Grupo de Trabajo</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-4">
+                    <label>Buscar por Nombre</label>
+                    <div class="input-group input-group-joined">
+                        <input class="form-control" type="text" placeholder="Nombre..." aria-label="Search"
+                            [(ngModel)]="optionFirst" name="buscarNombre">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-green" type="button" (click)="searchName()"><i
+                                    class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb alert-primary">
+                    <li class="breadcrumb-item liraiz" *ngFor="let item of listAux"><a
+                            (click)="getSelection(item.idValor)">{{item.valorData}}</a></li>
+                </ol>
+            </nav>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <div class="list-group grupotabla">
+                        <ul class="hijoss" *ngIf="viewData">
+                            <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <li class="itemh list-group-item " *ngFor="let item of listTree">
+                                <button title="Seleccionar Unidad"
+                                    class="btn btn-datatable btn-icon btn-transparent-dark" type="button"
+                                    (click)="getSelection(item.EnvolvedObject.DataBeanProperties.IDLn)"
+                                    (click)="getIdUnit(item.EnvolvedObject.DataBeanProperties.IDLn)">
+                                    <i class="fas fa-check-square"></i>
+                                </button>
+                                <span class="txt_r">{{decodeval(item.EnvolvedObject.DataBeanProperties.Code)}} -
+                                    {{decodeval(item.EnvolvedObject.DataBeanProperties.Name)}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <br>
+                    <h4>Guardar: {{nombre}}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-success" type="button" (click)="saveUnidad()">Seleccionar</button>
+        </div>
+    </div>
+</ng-template>

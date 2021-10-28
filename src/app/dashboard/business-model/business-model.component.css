@@ -1,0 +1,20 @@
+.btn-outline-success3:not(:disabled):not(.disabled).active, .btn-outline-success3:not(:disabled):not(.disabled):active, .show>.btn-outline-success3.dropdown-toggle {
+    background-image: url('../../../assets/img/checkblanco.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 41px;
+    background-color: #28a745;
+    color: #fff;
+
+
+}
+
+.btn-outline-success3 {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-success3:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+}

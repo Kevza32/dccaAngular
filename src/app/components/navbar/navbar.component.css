@@ -1,0 +1,8 @@
+.small-Img-Log{
+    width: 40px;
+}
+@media (min-width: 992px){
+    #sidebarToggle {
+        display: none;
+    }
+}

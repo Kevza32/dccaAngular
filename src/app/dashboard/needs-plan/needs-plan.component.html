@@ -1,0 +1,142 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Tipo Documento Soporte Para Plan de Inversión
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cbxTipo">Tipo</label>
+                                <select id="cbxTipo" class="form-control" [(ngModel)]="tipo" (change)="listarPlanNecesidades()">
+                                    <option [ngValue]="null" hidden disabled></option>
+                                    <option [ngValue]="0">Aportes en Dinero</option>
+                                    <option [ngValue]="1">Aportes en Especie</option>
+                                    <option [ngValue]="2">Bienes</option>
+                                    <option [ngValue]="3">Servicios</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mt-4">
+                            <label>&nbsp;&nbsp;</label>
+                            <button type="button" class="btn btn-outline-green" (click)="abirCrear(modalCrear)">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="col-12">
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Descripción</th>
+                                            <th>Requerido</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        </div>
+                                        <tr *ngFor="let item of listaPN">
+                                            <td>{{item.DataBeanProperties.IDNeedsPlanDocument}}</td>
+                                            <td>{{item.DataBeanProperties.Name}}</td>
+                                            <td>{{item.DataBeanProperties.Description}}</td>
+                                            <td>{{item.DataBeanProperties.myRequi}}</td>
+                                            <td>{{item.DataBeanProperties.Since.slice(0,10)}}</td>
+
+                                            <td>
+                                                <button title="Ver documentos" id="btnVerDocs" class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirModalE(item.DataBeanProperties,modalCrear)">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button title="Eliminar" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="abrirModalElim(item.DataBeanProperties); eliminarDocument.show();">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalCrear>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="form-group col-6">
+                <label for="txtNombre">Nombre</label>
+                <input type="text" id="txtNombre" class="form-control" [(ngModel)]="beanNeedsPlanD.Name">
+            </div>
+            <div class="form-group col-6">
+                <label>Requerido</label>
+                <select class="form-control" [(ngModel)]="beanNeedsPlanD.Required">
+                    <option [ngValue]="" hidden disabled></option>
+                    <option value="true">Requerido</option>
+                    <option value="false">No Requerido</option>
+                </select>
+            </div>
+            <div class="form-group col-12">
+                <label for="txtDescripcionNe">Descripción</label>
+                <textarea type="text" id="txtDescripcionNe" class="form-control" [(ngModel)]="beanNeedsPlanD.Description"> </textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-success" (click)="validar()">Guardar</button>
+        <button class="btn btn-outline-danger" (click)="modalRef.hide()">Cerrar</button>
+    </div>
+</ng-template>
+
+
+<div class="modal fade " bsModal #eliminarDocument="bs-modal" tabindex="-1" role="dialog" aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm  modal-dialog-centered">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar</h5>
+                <button class="close" type="button" id="btnCerrarElim" (click)="eliminarDocument.hide()" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="m-1 btn btn-outline-success" (click)="confirmEliminar()">Si</button>
+                <button class="btn btn-outline-danger m-1" (click)="eliminarDocument.hide()">No</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <ng-template #eliminarP>
+    <div class="modal-body text-center">
+        <p>¿Estás seguro de eliminar?</p>
+        <button class="btn btn-outline-success m-1" (click)="eliminarPro()">Si</button>
+        <button class="btn btn-outline-danger m-1" (click)="modalRef.hide()">No</button>
+    </div>
+</ng-template> -->

@@ -1,0 +1,51 @@
+<div class="container-fluid h-100">
+    <div class="d-flex flex-column justify-content-center align-content-center w-100 h-100 ">
+        <div class="mx-auto  ">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header justify-content-center">
+                    <h3 class="font-weight-light my-4">Inicio sesión</h3>
+                </div>
+                <div class="card-body">
+                    <div class="m-1">
+                        <img src="assets/img/descarga.jpg" class="imgS" alt="Logo dccae">
+                    </div>
+                    <form [formGroup]="formularioLogin">
+                        <div class="form-group">
+                            <input class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                                placeholder="Usuario" id="inputEmailAddress" type="email" formControlName="optionUser"
+                                name="email" />
+                            <div *ngIf="formularioLogin.controls['optionUser'].invalid &&
+                            (formularioLogin.controls['optionUser'].dirty ||
+                            formularioLogin.controls['optionUser'].touched)" class="text-danger">
+                                <div *ngIf="formularioLogin.controls['optionUser'].errors.required">Usuario es requerido
+                                </div>
+                                <div *ngIf="formularioLogin.controls['optionUser'].errors.email">Usuario no valido
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" placeholder="Contraseña" id="inputPassword" type="password"
+                                formControlName="optionPassword" name="password" />
+                            <div *ngIf="formularioLogin.controls['optionPassword'].invalid && (formularioLogin.controls['optionPassword'].dirty || formularioLogin.controls['optionPassword'].touched)"
+                                class="invalid-feedback">
+                                <div *ngIf="formularioLogin.controls['optionPassword'].errors.required">Contraseña es
+                                    requerida
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
+                            <a class="small" href="auth-password-basic.html">Forgot Password?</a>
+                            <button class="btn btn-primary" (click)="login()">Entrar</button>
+                        </div>
+                        <!-- *ngIf="formularioLogin.valid" -->
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <div class="small"><a (click)="navegar('home/user')">Necesitas una
+                            cuenta? Crear una!</a></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

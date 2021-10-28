@@ -1,0 +1,280 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Registrar proceso
+                    </h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cbxBussinessProccess">PROCESOS DISPONIBLES</label>
+                                <select id="cbxBussinessProccess" class="form-control"
+                                    [(ngModel)]="cbxBussinessProccess">
+                                    <option [ngValue]="" hidden disabled></option>
+                                    <option *ngFor="let item of listaProcesosNegocio"
+                                        [ngValue]="item.DataBeanProperties.IDBusinessProcess">
+                                        {{item.DataBeanProperties.IDBusinessProcess}} - {{item.DataBeanProperties.Name}}
+                                        - {{item.DataBeanProperties.Description}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="txtEmpresa">Usuario</label>
+                                <input type="text" [(ngModel)]="txtEmpresa" name="txtEmpresa" readonly
+                                    (click)="tipoSeleccion()" id="txtEmpresa" class="form-control">
+                            </div>
+                            <app-modal-search class="d-none" (account)="getAccountBoos($event)"></app-modal-search>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row" *ngIf="cbxBussinessProccess!=null && isValid==true">
+                        <div class="col-12 form-group">
+                            <label for="txtDesTramite">Descripción del tramite</label>
+                            <textarea id="txtDesTramite" class="form-control"
+                                [(ngModel)]="txtDescripcionProccess"></textarea>
+                            <button class="btn btn-outline-success my-2"
+                                (click)="validarCreateBussinesP()">Guardar</button>
+                            <!-- <small *ngIf="cargaCrearProcess ==">Espere un momento por favor ...</small> -->
+                        </div>
+                    </div>
+                    <ngx-spinner [name]="'spinnerPrincipal'" [fullScreen]="false" type="ball-clip-rotate-multiple"
+                        size="medium">
+                        <p class="loading">Cargando...</p>
+                    </ngx-spinner>
+                    <div class="form-row" *ngIf="vistaT == true">
+                        <div class="col-12">
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Id documento</th>
+                                            <th>Nombre</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr *ngFor="let item of listaDeDocumentos">
+                                            <td>{{item.DataBeanProperties.IDAction}}</td>
+                                            <td>{{item.DataBeanProperties.Name}}</td>
+                                            <td>{{item.DataBeanProperties.UptoDate}}</td>
+                                            <td>{{estadoDoc[item.DataBeanProperties.State]}}</td>
+
+                                            <td>
+                                                <button *ngIf="item.DataBeanProperties.DocumentType == 3"
+                                                    title="Formulario"
+                                                    class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                    (click)="abrirModal(formularioG, item.DataBeanProperties)">
+                                                    <i class="fas fa-file-alt"></i></button>
+                                                <button title="Archivo"
+                                                    *ngIf="item.DataBeanProperties.DocumentType == 2"
+                                                    class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                    (click)="abrirSubirArchivo(archivo,item.DataBeanProperties,0)">
+                                                    <i class="fas fa-file-archive"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fa-3x" [ngClass]="{'d-none': !spinner2}">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="form-row" *ngIf="beanDocumentosaLlenar != null">
+                        <div class="col-12" *ngIf="isRadicado == false">
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Id documento</th>
+                                            <th>Nombre</th>
+                                            <th>Observaciones</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        <tr *ngFor="let item of beanDocumentosaLlenar"
+                                            [ngClass]="{'bg-green text-white': item.DataBeanProperties.State == 1}">
+                                            <td>{{item.DataBeanProperties.IDAction}}</td>
+                                            <td>{{item.DataBeanProperties.Name}}</td>
+                                            <td>{{item.DataBeanProperties.Observations}}</td>
+                                            <td>{{item.DataBeanProperties.UptoDate}}</td>
+                                            <td>{{estadoDoc[item.DataBeanProperties.State]}}</td>
+
+                                            <td>
+                                                <button *ngIf="item.DataBeanProperties.DocumentType == 3"
+                                                    title="Formulario"
+                                                    [ngClass]="{'btn-transparent-light': item.DataBeanProperties.State == 1}"
+                                                    class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                    (click)="abrirModal(formularioG, item.DataBeanProperties)">
+                                                    <i class="fas fa-file-alt"></i></button>
+                                                <button title="Archivo"
+                                                    *ngIf="item.DataBeanProperties.DocumentType == 2"
+                                                    [ngClass]="{'btn-transparent-light': item.DataBeanProperties.State == 1}"
+                                                    class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                    (click)="abrirSubirArchivo(archivo,item.DataBeanProperties,1)">
+                                                    <i class="fas fa-file-archive"></i>
+                                                </button>
+                                                <!-- <a title="Ver Archivo"
+                                                    *ngIf="item.DataBeanProperties.DocumentType == 2 && item.DataBeanProperties.State == 1"
+                                                    [ngClass]="{'btn-transparent-light': item.DataBeanProperties.State == 1}"
+                                                    class=" btn-datatable btn-icon btn-transparent-dark icono"
+                                                    type="button"
+                                                    href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}"
+                                                    target="_blank">
+                                                    <i class="fa fa-eye"></i> -->
+                                                <!-- </a> -->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- <button class="btn btn-outline-green m-1" (click)="validarDocumentos()">Validar</button> -->
+                        <button class="btn btn-outline-green m-1" *ngIf="isValid==false && isRadicado == false"
+                            (click)="radicar()">Radicar</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #archivo>
+    <div class="modal-header">
+        <h6 class="modal-title pull-left">Cargar archivo <br> {{beanProcedureAction.Name}}</h6>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-12">
+                <small class="text-danger">*Se recomienda subir archivo .pdf o .rar, tamaño recomendado 50mb</small>
+            </div>
+            <br>
+            <div class="col-12">
+                <label for="fileS" class="btn btn-success">Subir archivo <i class="fas fa-upload"></i></label>
+                <input type="file" id="fileS" (change)="cargarFile($event.target.files)">
+                <a href="{{getUrl(beanProcedureAction.MediaContext, this.beanProcedureAction.Media)}}"
+                    target="_blank"><small>{{beanProcedureAction.Media}}</small> </a>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-12">
+                <button class="btn btn-success mb-2" (click)="abrirAnexo(anexo)">Subir anexos</button>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="datatable">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th>Archivo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let item of listaAnexos">
+                            <td>{{item.DataBeanProperties.Name}}</td>
+                            <td>{{item.DataBeanProperties.Description}}</td>
+                            <td><a href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}"
+                                    target="_blank">{{item.DataBeanProperties.Media}}</a></td>
+                            <td>
+                                <button title="eliminar anexo" class="btn-datatable btn-icon btn-transparent-dark"
+                                    type="button" (click)="eliminarAnexo(item.DataBeanProperties.IDAttechedDocument)">
+                                    <i class="fas fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #anexo>
+    <div class="modal-header">
+        <h6 class="modal-title pull-left">Cargar anexo</h6>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef2.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-row">
+            <div class="col-12">
+                <small class="text-danger">*Se recomienda subir archivo .pdf o .rar, tamaño recomendado 50mb</small>
+            </div>
+            <div class="col-12">
+                <label for="AnexoS" class="btn btn-success m-1">Anexos archivo <i class="fas fa-upload"></i></label>
+                <input type="file" id="AnexoS" (change)="cargarAnexo($event.target.files)">
+                <a href="{{getUrl(anexoMediaContext, anexoMedia)}}" target="_blank"><small>{{anexoMedia}}</small> </a>
+            </div>
+            <div class="col-12">
+                <label for="txtNombre">Nombre</label>
+                <input type="text" class="form-control" id="txtNombre" [(ngModel)]="txtNombre">
+            </div>
+            <div class="col-12">
+                <label for="txtDescripcion">Descripción</label>
+                <textarea id="txtDescripcion" class="form-control" [(ngModel)]="txtDescripcion"></textarea>
+            </div>
+            <button class="btn btn-success m-1" (click)="anadirAnexo()">Guardar anexo</button>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #formularioG>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left"></h4>
+        <button type="button" class="close pull-right d-none" aria-label="Close" id="btnCerrarP"
+            (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div [ngSwitch]="beanProcedureAction.FormEngine">
+            <app-formulario-generico *ngSwitchCase="'com.cofip.bpmform.Convenio'"
+                [IdAction]="beanProcedureAction.IDAction" [IdProcedureImp]="IDProcedureImp"
+                [IdStage]="beanProcedureAction.IDStage" (resultadoForm)="obtenerProcedimientoAcccion($event)">
+            </app-formulario-generico>
+            <p *ngSwitchCase="'com.cofip.bpmform.Beneficiarios'">
+                Formulario Beneficiarios
+            </p>
+            <p *ngSwitchCase="'com.cofip.bpmform.PlanInversion'">
+                Formulario plan de inversion
+            </p>
+        </div>
+    </div>
+</ng-template>

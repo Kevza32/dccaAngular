@@ -1,0 +1,128 @@
+<header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-4">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto mt-4">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Activar Cuenta
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-5">
+                            <label>Buscar por Nit</label>
+                            <div class="input-group input-group-joined">
+                                <input class="form-control" type="text" placeholder="Documento..." aria-label="Search" [(ngModel)]="optionNit" name="buscar">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-green" type="button" (click)="searchNit()"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="card-body" *ngFor="let item of listAccount">
+                    <a class="card card-icon lift lift-sm mb-4">
+                        <div class="row">
+                            <div class="col-auto card-icon-aside bg-green">
+                                <i-feather name="users" class="big" style="color: white;"></i-feather>
+                            </div>
+                            <div class="col">
+                                <div class="card-body py-5">
+                                    <h5 class="card-title text-green mb-2">Usuario</h5>
+                                    <p class="card-text mb-1"><strong>Cedula:</strong> {{item.DataBeanProperties.Nit}}</p>
+                                    <p class="card-text mb-1"><strong>Nombre:</strong> {{item.DataBeanProperties.Name1}}</p>
+                                    <p class="card-text mb-1"><strong>Apellido:</strong> {{item.DataBeanProperties.Surname1}}</p>
+                                    <div class="row">
+                                        <div class="col-8">
+                                        </div>
+                                        <div class="col-4">
+                                            <button class="btn btn-outline-green" type="button" style="float: left;" (click)="openUser(item.DataBeanProperties.IDAccount, modalUser)">Activar</button>
+                                            <button class="btn btn-outline-danger" type="button" style="float: right;" (click)="openDesactive(item.DataBeanProperties.IDAccount, modalDesactive)">Desactivar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalUser>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Activar Cuenta</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <label>Usuario</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionUser" name="userRole" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Contraseña</label>
+                    <input class="form-control" type="password" [(ngModel)]="optionPassword" name="passwordRole" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Valirdar Contraseña</label>
+                    <input class="form-control" type="password" [(ngModel)]="optionPassword2" name="passwordRole" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <label>Rol</label>
+                    <select class="form-control" [(ngModel)]="optionRole" (change)="changeRole()" name="selectorRole">
+                        <option [ngValue]="undefined" hidden>{{selectorRole}}</option>
+                        <option [ngValue]="role.DataBeanProperties.IDRole"
+                            *ngFor="let role of listRole">{{role.DataBeanProperties.Name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success" type="button" (click)="sendAccount()">Guardar</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalDesactive>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="sendDesactive()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>

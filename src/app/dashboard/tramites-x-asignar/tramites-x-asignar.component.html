@@ -1,0 +1,279 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Tramites por asignar
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row p-2">
+                        <div class="form-group col-md-6">
+                            <label>Caracterización</label>
+                            <select [(ngModel)]="opcionBusinessClass" class="form-control"
+                                (change)="listarProcesosNegocio()">
+                                <option value=null></option>
+                                <option *ngFor="let item of listaCategorias"
+                                    value="{{item.DataBeanProperties.IDBusinessClass}}">
+                                    {{item.DataBeanProperties.Name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div *ngIf="opcionBusinessClass > 0 " class="form-group col-md-4">
+                            <label for="cbxBussinessProccess">Tramite</label>
+                            <select id="cbxBussinessProccess" class="form-control" [(ngModel)]="cbxBussinessProccess">
+                                <option [ngValue]="" hidden disabled></option>
+                                <option *ngFor="let item of listaProcesosNegocio"
+                                    [ngValue]="item.DataBeanProperties.IDBusinessProcess">
+                                    {{item.DataBeanProperties.Name}}</option>
+                            </select>
+
+                        </div>
+                        <div *ngIf="cbxBussinessProccess>0" class="col-md-2 d-flex align-items-center">
+                            <button class="btn btn-outline-success" (click)="listarTramitesXAsignar()">Buscar</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="col-12">
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Id Procedimiento</th>
+                                            <th>Tramite</th>
+                                            <th>Solicitante</th>
+                                            <th>Etapa Actual</th>
+                                            <th>Fecha de tramite</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                            <i class="fas fa-spinner fa-spin"></i>
+                                        </div>
+                                        <tr *ngFor="let item of listaDeTramites">
+                                            <td>{{item.DataBeanProperties.IDProcedureImp}}</td>
+                                            <td>{{item.DataBeanProperties.Name}}</td>
+                                            <td>{{item.DataBeanProperties.AccountName}}</td>
+                                            <td>{{item.DataBeanProperties.ProcedureName}}</td>
+                                            <td>{{item.DataBeanProperties.Since | date :'medium'}}</td>
+                                            <td>{{item.DataBeanProperties.StateName}}</td>
+                                            <td>
+                                                <button tooltip="Ver documentos"
+                                                    class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                    (click)="abrirTabla(item.DataBeanProperties);listarDocumentos()">
+                                                    <i class="fas fa-table"></i>
+                                                </button>
+                                                <button tooltip="Asignar usuario responsable"
+                                                    class="btn-datatable btn-icon btn-transparent-dark " type="button"
+                                                    (click)="abrirTabla(item.DataBeanProperties);abrirModal(asignar,1)">
+                                                    <i class="fa fa-external-link" aria-hidden="true"></i>
+                                                </button>
+                                                <button tooltip="Auto asignar procedimiento"
+                                                    class="btn-datatable btn-icon btn-transparent-dark " type="button"
+                                                    (click)="abrirTabla(item.DataBeanProperties);autoAsignarImp();">
+                                                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" *ngIf="beanDocumentosaAsignar != null">
+                        <div class="col-12">
+                            <div class="datatable">
+                                <table class="table table-bordered table-hover" id="dataTable" width="100%"
+                                    cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Id documento</th>
+                                            <th>Nombre</th>
+                                            <th>Observaciones</th>
+                                            <th>Grupo de trabajo</th>
+                                            <th>Fecha</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr *ngFor="let item of listaDeDocumentosAsignar">
+                                            <td>{{item.DataBeanProperties.IDAction}}</td>
+                                            <td>{{item.DataBeanProperties.Name}}</td>
+                                            <td>{{item.DataBeanProperties.Observations}}</td>
+                                            <td>{{item.DataBeanProperties.FunctionalIDName}}</td>
+                                            <td>{{item.DataBeanProperties.UptoDate}}</td>
+                                            <td>{{estadoDoc[item.DataBeanProperties.State]}}</td>
+
+                                            <td>
+                                                <button tooltip="Asignar usuario responsable"
+                                                    class="btn-datatable btn-icon btn-transparent-dark " type="button"
+                                                    (click)="abrirModal(asignar,2);setBeanAction(item.DataBeanProperties)">
+                                                    <i class="fa fa-external-link" aria-hidden="true"></i>
+                                                </button>
+
+                                                <button tooltip="Auto asignar procedimiento"
+                                                    class="btn-datatable btn-icon btn-transparent-dark " type="button"
+                                                    (click)="setBeanAction(item.DataBeanProperties);autoAsignarAction();">
+                                                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                                </button>
+                                                <!--
+                                                <button title="Archivo"
+                                                    *ngIf="item.DataBeanProperties.DocumentType == 2"
+                                                    class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                                    (click)="abrirSubirArchivo(archivo,item.DataBeanProperties)"
+                                                    target="_blank">
+                                                    <i class="fa fa-eye"></i>
+                                                </button>
+                                                <button title="Aprobar"
+                                                    class="btn-datatable btn-icon btn-transparent-dark " type="button"
+                                                    (click)="aprobarDocumento(item.DataBeanProperties)">
+                                                    <i class="fa fa-check"></i>
+                                                </button>
+                                                <button title="Rechazar"
+                                                    class="btn-datatable btn-icon btn-transparent-dark " type="button"
+                                                    (click)="abrirRechazar(item.DataBeanProperties,rechazar)">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            -->
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #asignar>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Asignar usuario</h4>
+        <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarP" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" *ngIf="id==2">
+        <div class="row px-3">
+            <div class="w-100 ">
+                <h5 class="ml-3">Buscar usuario</h5>
+            </div>
+            <div class="col-md-4">
+                <label for="txtNit">Nit</label>
+                <input class="form-control" type="number" [(ngModel)]="txtNit" id="txtNit">
+            </div>
+            <div class="col-md-4">
+                <label for="txtNombre">Nombre</label>
+                <input class="form-control" type="text" [(ngModel)]="txtNombre" id="txtNombre">
+            </div>
+            <div class="col-md-4">
+                <label for="txtApellido">Apellido</label>
+                <input class="form-control" type="text" [(ngModel)]="txtApellido" id="txtApellido">
+            </div>
+            <!-- <div class="col-md-3">
+                <label for="cbxEstado">Estado</label>
+                <select name="" id="cbxEstado" class="form-control" [(ngModel)]="cbxestado">
+                    <option value="0">Activo</option>
+                    <option value="1">Inactivo</option>
+                </select>
+            </div> -->
+        </div>
+        <div class="w-100 d-flex align-items-center justify-content-end">
+
+            <button class="btn btn-outline-success m-3" (click)="listarUsuarios()">Buscar</button>
+        </div>
+    </div>
+
+    <div class="modal-body" *ngIf="id==1">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="">Grupo de trabajo</label>
+                    <input class="form-control" (click)="abrirUnidad()" [value]="nombreUni" type="text">
+                </div>
+
+                <!-- <div class="col-md-2 d-flex align-items-center">
+
+                    <button class="btn btn-outline-success m-2" (click)="listarUsuarios2()">Buscar</button>
+                </div> -->
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="px-3 w-100">
+
+        <div class="form-row px-3 mb-3">
+            <div class="col-12">
+                <div class="datatable">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Cédula/Nit</th>
+                                <th>Nombre</th>
+                                <th>Grupo de trabajo</th>
+                                <th>Desde</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listaUsuarios">
+                                <!-- <td>{{item.DataBeanProperties |json}}</td> -->
+                                <td>{{item.DataBeanProperties.IDWorkGroupMember}}</td>
+                                <td>{{item.DataBeanProperties.AccountID}}</td>
+                                <td>{{item.DataBeanProperties.AccountName}}</td>
+                                <td>{{item.DataBeanProperties.FunctionalIDName}}</td>
+                                <td>{{item.DataBeanProperties.Since}}</td>
+                                <td>
+                                    <button *ngIf="id==2" title="Seleccionar"
+                                        tooltip="Asigar usuario a este procedimiento"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="asignarAction(item.DataBeanProperties)">
+                                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                    </button>
+                                    <button *ngIf="id==1" title="Seleccionar"
+                                        tooltip="Asigar usuario a este procedimiento"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="asignarImp(item.DataBeanProperties)">
+                                        <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</ng-template>
+<app-modal-unit class="d-none" (idInputUnit)="getUnit($event)" (nameUnitINput)="getNameUnit($event)">
+</app-modal-unit>

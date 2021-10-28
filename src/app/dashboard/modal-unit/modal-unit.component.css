@@ -1,0 +1,70 @@
+.hijos {
+    position: absolute;
+    min-width: 200px;
+    min-height: 200px;
+    background-color: azure;
+}
+
+.tableHijos {
+    width: 90%;
+    margin-left: 5%;
+}
+
+.grupotabla {
+    /* background-color:rgba(105,105,105,0.5); */
+    margin-bottom: 7px;
+    /* border: solid 1px #D3D1D1; */
+    min-height: 40px;
+    padding-top: 5px;
+    padding-left: 8px;
+}
+
+.btn_new {
+    margin: 20px;
+}
+
+.modulo0 {
+    width: 100%;
+}
+
+.descripcion {
+    margin-left: 10px;
+    color: #273D84;
+}
+
+.hijoss {
+    width: 90%;
+    margin-left: 1%;
+    border-left: solid 1p #D3D1D1;
+}
+
+.txt_r {
+    padding-left: 20px;
+    border-bottom: thick 1px gray;
+    font-size: 17px;
+}
+
+.txt_h {
+    padding-left: 20px;
+    font-size: 15px;
+}
+
+.itemh {
+    border: 0px;
+}
+
+.list-group-item {
+    padding: 0.2rem 1.25rem;
+}
+
+.miTabla th {
+    max-width: 80px;
+}
+
+.liraiz {
+    cursor: pointer;
+}
+
+.space {
+    margin-top: 5px;
+}

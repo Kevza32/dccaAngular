@@ -1,0 +1,152 @@
+<div class="form-row">
+    <h5 class="w-100">Formulario Beneficiarios</h5>
+    <ng-template #crearBeneficiario>
+        <div class="modal-content sugundo_m">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left">Nuevo Beneficiario</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="cerrar()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-2 d-none">
+                    <label>Buscar unidad</label>
+                    <br>
+                    <app-modal-unit (idInputUnit)="getUnit($event)" (nameUnitINput)="getNameUnit($event)">
+                    </app-modal-unit>
+                </div>
+                <div class="col-md-2 d-none">
+                    <label>Buscar unidad</label>
+                    <br>
+                    <app-modal-unit-militar (idInputUnit)="getUnitM($event)" (nameUnitINput)="getNameUnitM($event)">
+                    </app-modal-unit-militar>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtUnidad">Unidad Beneficiada</label>
+                            <input type="text" id="txtUnidadB" (click)="abirModalUnidadMilitar()"
+                                [(ngModel)]="nameUNitBeneficiary" readonly class="form-control">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtUnidad">Grupo de Trabajo</label>
+                            <input type="text" id="txtUnidadR" (click)="abirModalUnidad()" [(ngModel)]="nameUNit"
+                                readonly class="form-control">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtVD">Valor en dinero</label>
+                            <!-- <input mvndrMatCurrencyFormat [allowNegative]="false" [currencyCode]="'COP'"
+                (blur)="updateUSAmount($event)" type="text" id="txtVD" class="form-control InputP"
+                [(ngModel)]="valorDinero"> -->
+                            <input currencyMask class="form-control InputP" [(ngModel)]="valorDinero" />
+
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtVE">Valor en especie</label>
+                            <!-- <input mvndrMatCurrencyFormat [allowNegative]="false" [currencyCode]="'COP'"
+                (blur)="updateUSAmount2($event)" type="text" id="txtVE" class="form-control InputP"
+                [(ngModel)]="valorEspecies"> -->
+                            <input currencyMask class="form-control InputP" [(ngModel)]="valorEspecies" />
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="validarBene()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <div class="col-md-12 mt-4">
+        <div class="datatable">
+            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Grupo de trabajo</th>
+                        <th>Unidad Beneficiada</th>
+                        <th>Valor en especie (A)</th>
+                        <th>Valor en dinero (B)</th>
+                        <th>Valor total</th>
+                        <th>Acciones
+                            <button class="btn btn-outline-green m-1" (click)="openCrear(crearBeneficiario)"><i
+                                    class="fa fa-plus " aria-hidden="true"></i></button>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- *ngFor="let item of documentosXresponder" -->
+                    <tr *ngFor="let item of listaBene">
+                        <td>{{item.DataBeanProperties.IDBeneficiary}}</td>
+                        <td>{{item.DataBeanProperties.Name}}</td>
+                        <td>{{item.DataBeanProperties.Sigla}}</td>
+                        <td class="InputP">{{item.DataBeanProperties.AgreementSpeciesValue |
+                            currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td class="InputP">{{item.DataBeanProperties.AgreementMoneyValue |
+                            currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td class="InputP">
+                            {{total(item.DataBeanProperties.AgreementSpeciesValue,item.DataBeanProperties.AgreementMoneyValue)
+                            | currency:'COP':'symbol-narrow':'3.0'}}
+                        </td>
+                        <td>
+                            <button title="Eliminar Beneficiario" class=" btn-datatable btn-icon btn-transparent-dark"
+                                type="button" (click)="openDelete(item.DataBeanProperties.IDBeneficiary, modalDelete)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <button title="Editar Plan" id="btnVerDocs"
+                                class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                                (click)="abrirEditar(crearBeneficiario,item.DataBeanProperties);">
+                                <i class="fa fa-pencil-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="BeanProcedureAction">
+            <button
+                *ngIf="BeanProcedureAction.State == 0 ||BeanProcedureAction.State == 2|| BeanProcedureAction.State == 5 "
+                class="btn btn-outline-success" (click)="childModal.show()">Validar Formulario</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" bsModal #childModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header ">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">Validar formulario</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarAprobacion"
+                    (click)="childModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDes"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprobar()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechazar()">Rechazar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #modalDelete>
+    <div class="modal-content sugundo_m">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteBeneficiary()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>

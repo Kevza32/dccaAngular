@@ -1,0 +1,126 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Estados
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cbxSucursal">Lista de Procesos</label>
+                                <select class="form-control" [(ngModel)]="opcionModel" (change)="listarEstadosxSector()"
+                                    name="selectorModel">
+                                    <option [ngValue]="undefined" disabled hidden></option>
+                                    <option [ngValue]="model.DataBeanProperties.IDBusinessProcess"
+                                        *ngFor="let model of listaProcesosNegocio">
+                                        {{model.DataBeanProperties.Name}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body h-100 d-flex flex-column justify-content-center py-5 py-xl-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Crear Documento de Entrada &nbsp;&nbsp;</label>
+                                <button type="button" class="btn btn-outline-green" (click)="openModalCrear(crear)">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="datatable">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>Tipo</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <tr *ngFor="let document of listaDeEstados">
+                                    <td>{{document.DataBeanProperties.IDProcedureState}}</td>
+                                    <td>{{document.DataBeanProperties.Name}}</td>
+                                    <td>{{document.DataBeanProperties.Description}}</td>
+                                    <td>{{document.DataBeanProperties.Type}}</td>
+                                    <td>{{document.DataBeanProperties.Since}}</td>
+                                    <td>
+                                        <button title="Editar Documento"
+                                            (click)="openModalEditar(crear,document.DataBeanProperties)"
+                                            class=" btn-datatable btn-icon btn-transparent-dark" type="button">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button title="Eliminar Documento"
+                                            class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                            (click)="openModalEliminar(eliminar,document.DataBeanProperties)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <ng-template #crear>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" *ngIf="this.beanEstado.IDProcedureState  == null">Crear</h5>
+            <h5 class="modal-title" *ngIf="this.beanEstado.IDProcedureState  != null">Editar</h5>
+            <button class="close" type="button" (click)="modalRef.hide()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="txtNombre">Nombre</label>
+                    <input id="txtNombre" class="form-control" type="text" [(ngModel)]="beanEstado.Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtTipo">Tipo</label>
+                    <input id="txtTipo" class="form-control" type="number" [(ngModel)]="beanEstado.Type">
+                </div>
+                <div class="form-group col-md-12">
+                    <label for="txtTipo">Descripción</label>
+                    <textarea id="txtTipo" class="form-control" type="text" [(ngModel)]="beanEstado.Description"> </textarea>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline-green" (click)="guardarEstado()" *ngIf="this.beanEstado.IDProcedureState  == null">Crear</button>
+            <button type="button" class="btn btn-outline-green" (click)="guardarEstado()" *ngIf="this.beanEstado.IDProcedureState  != null">Editar</button>
+        </div>   
+    </div>
+</ng-template> 
+
+<ng-template #eliminar>
+    <div class="modal-body text-center">
+      <p>¿Está seguro de eliminar?</p>
+      <button type="button" class="btn btn-outline-danger  m-1" (click)="EliminarEstado()"> Si</button>
+      <button type="button" class="btn btn-outline-primary m-1" (click)="modalRef.hide()"> No</button>
+    </div>
+</ng-template>

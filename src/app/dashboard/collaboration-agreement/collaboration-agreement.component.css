@@ -1,0 +1,22 @@
+.link {
+    color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.link:hover {
+    color: #0061f2;
+    text-decoration-line: solid;
+    background-color: transparent;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}

@@ -1,0 +1,141 @@
+<button class="btn btn-outline-green" id="btnModalSearch" (click)="openSearch(modalSearch)">Buscar</button>
+
+<ng-template #modalSearch>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Buscar Tercero</h5>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Buscar por Nit</label>
+                            <div class="input-group input-group-joined">
+                                <input class="form-control" type="text" placeholder="Nit..." aria-label="Search"
+                                    [(ngModel)]="optionNit" name="buscar">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-green" type="button" (click)="searchNit()"><i
+                                            class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label>Buscar por Nombre</label>
+                            <div class="input-group input-group-joined">
+                                <input class="form-control" type="text" placeholder="Nombre..." aria-label="Search"
+                                    [(ngModel)]="optionFirst" name="buscarNombre">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-green" type="button" (click)="searchName()"><i
+                                            class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <label>Buscar por Apellido</label>
+                            <div class="input-group input-group-joined">
+                                <input class="form-control" type="text" placeholder="Apellido..." aria-label="Search"
+                                    [(ngModel)]="optionLast" name="buscarApellido">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-green" type="button" (click)="searchLast()"><i
+                                            class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="datatable">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id Account</th>
+                            <th>Nit</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <!-- <th>Acciones</th> -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let account of listAccount" (click)="getAccount(account)">
+                            <td>{{account.DataBeanProperties.IDAccount}}</td>
+                            <td>{{account.DataBeanProperties.Nit}}</td>
+                            <td>{{account.DataBeanProperties.Name1}}</td>
+                            <td>{{account.DataBeanProperties.Surname1}}</td>
+                            <!-- <td>
+                                <button title="Seleccionar Usuario" class="btn-datatable btn-icon btn-transparent-dark"
+                                    type="button" (click)="getAccount(account)">
+                                    <i class="fas fa-check-square"></i>
+                                </button>
+                            </td> -->
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-primary m-1" *ngIf="listAccount==null" type="button"
+                (click)="thirdModal.show(); abirCrear()">Crear usuario</button>
+
+        </div>
+    </div>
+
+
+    <div class="modal fade" bsModal #thirdModal="bs-modal" tabindex="-1" role="dialog"
+        aria-labelledby="dialog-nested-name3">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content sugundo_m">
+                <div class="modal-header">
+                    <h4 id="dialog-nested-name3" class="modal-title pull-left">Crear usuario</h4>
+                    <button type="button" class="close pull-right" aria-label="Close" (click)="thirdModal.hide()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="txtNit">Nit</label>
+                            <input id="txtNit" type="text" class="form-control" [(ngModel)]="beanAccount.Nit">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtName1">Primer nombre</label>
+                            <input id="txtName1" type="text" class="form-control" [(ngModel)]="beanAccount.Name1">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtName2">Segundo nombre</label>
+                            <input id="txtName2" type="text" class="form-control" [(ngModel)]="beanAccount.Name2">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtSurname1">Primer apellido</label>
+                            <input id="txtSurname1" type="text" class="form-control" [(ngModel)]="beanAccount.Surname1">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtSurname2">Segundo apellido</label>
+                            <input id="txtSurname2" type="text" class="form-control" [(ngModel)]="beanAccount.Surname2">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtAddress">Dirección</label>
+                            <input id="txtAddress" type="text" class="form-control" [(ngModel)]="beanAccount.Address">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtTel">Teléfono</label>
+                            <input id="txtTel" type="number" class="form-control" [(ngModel)]="beanAccount.Tel">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="txteMail">Correo</label>
+                            <input id="txteMail" type="email" class="form-control" [(ngModel)]="beanAccount.eMail">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline-danger" id="btnCerrarNewUser"
+                        (click)="thirdModal.hide()">Cerrar</button>
+                    <button class="btn btn-outline-success" (click)="crearUsuario()">Crear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

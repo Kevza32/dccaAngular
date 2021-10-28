@@ -1,0 +1,286 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Reportes
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Tercero</label>
+                            <br>
+                            <app-modal-search (account)="getAccount($event)"></app-modal-search>
+                            <!-- <button class="btn btn-outline-green" (click)="openTercero(modalTercero)" (click)="clearSearch()">Buscar</button> -->
+                        </div>
+                        <div class="col-4">
+                            <label>Tercero Seleccionado</label>
+                            <input class="form-control" disabled=»disabled» type="text" placeholder={{nameUser}}/>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-0 mt-1">Unidad Mayor</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Seleccionar</label>
+                            <br>
+                            <app-modal-unit (idInputUnit)="getIdHigher($event)" (nameUnitINput)="getNameHigher($event)"></app-modal-unit>
+                        </div>
+                        <div class="col-10">
+                            <label>Unidades seleccionadas</label>
+                            <div *ngFor="let item of listUnitNameHigher">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item}} <span class="badge bg-secondary" (click)="deleteHigher()">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Unidad Menor</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Seleccionar</label>
+                            <br>
+                            <app-modal-unit (idInputUnit)="getUnit2($event)" (nameUnitINput)="getNameUnit2($event)"></app-modal-unit>
+                        </div>
+                        <div class="col-10">
+                            <label>Unidades Seleccionadas</label>
+                            <div *ngFor="let item of listUnitNameLess">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item}} <span class="badge bg-secondary" (click)="deleteLess()">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Unidad Táctica</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Seleccionar</label>
+                            <br>
+                            <app-modal-unit (idInputUnit)="getUnit3($event)" (nameUnitINput)="getNameUnit3($event)"></app-modal-unit>
+                        </div>
+                        <div class="col-10">
+                            <label>Unidades Seleccionadas</label> 
+                            <div *ngFor="let item of listUnitNameTac">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item}} <span class="badge bg-secondary" (click)="deleteTac()">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Capítulo de Apoyo</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Seleccionar</label>
+                            <mat-select class="form-control" placeholder="Capitulo de Apoyo" [formControl]="formChapter" multiple>
+                                <mat-option *ngFor="let item of chapter" (click)="changeEvent(item.DataBeanProperties.IDChapter, item.DataBeanProperties.Description)" [value]="item.DataBeanProperties.IDChapter">{{item.DataBeanProperties.Description}}</mat-option>
+                            </mat-select>
+                            <br>
+                        </div>
+                        <div class="col-6">
+                            <label>Capítulos Seleccionados</label>
+                            <div *ngFor="let item of listCapitulo">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item.dataValor}} <span class="badge bg-secondary" (click)="deleteChapter(item.idValor)">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Estado del Convenio</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Seleccionar</label>
+                            <mat-select class="form-control" placeholder="Estado del Convenio" [formControl]="formAgreement" multiple>
+                                <mat-option *ngFor="let item of agreement" (click)="changeEventAgre(item.DataBeanProperties.Value, item.DataBeanProperties.Property)" [value]="item.DataBeanProperties.Value">{{item.DataBeanProperties.Property}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="col-6">
+                            <label>Estados Seleccionados</label>
+                            <div *ngFor="let item of listAgreement">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item.dataValor}} <span class="badge bg-secondary" (click)="deleteAgreement(item.idValor)">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Artículo Presupuestal</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Seleccionar</label>
+                            <mat-select class="form-control" placeholder="Articulo Presupuestal" [formControl]="formArticle" multiple>
+                                <mat-option *ngFor="let item of investment" (click)="changeEventArticle(item.DataBeanProperties.IDBudgetArticle, item.DataBeanProperties.Name)" [value]="item.DataBeanProperties.IDBudgetArticle">{{item.DataBeanProperties.Name}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="col-6">
+                            <label>Artículo Seleccionados</label>
+                            <div *ngFor="let item of listArticuloPresupuestal">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item.dataValor}} <span class="badge bg-secondary" (click)="deleteArticle(item.idValor)">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Tipo de Aporte</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Seleccionar</label>
+                            <mat-select class="form-control" placeholder="Tipo de Aportes" [formControl]="formAport" multiple>
+                                <mat-option *ngFor="let item of listAportes" (click)="changeEventAport(item.DataBeanProperties.Value, item.DataBeanProperties.Property)" [value]="item.DataBeanProperties.Value">{{item.DataBeanProperties.Property}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="col-6">
+                            <label>Tipo de Aportes Seleccionados</label>
+                            <div *ngFor="let item of listTipoAPorte">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item.dataValor}} <span class="badge bg-secondary" (click)="deleteAport(item.idValor)">x</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Rubro Presupuestal</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-3">
+                            <label>Seleccionar</label>
+                            <br>
+                            <app-modal-investment (idInputUnit)="getInvestment($event)" (nameUnitINput)="getNameInvestment($event)"></app-modal-investment>
+                        </div>
+                        <div class="col-9">
+                            <label>Rubros Seleccionados</label>
+                            <div *ngFor="let item of listUnitNameInvestment">
+                                <div class="row" style="padding-bottom: 1%;">
+                                    <button type="button" class="btn btn-outline-green">
+                                        {{item}} <span class="badge bg-secondary" (click)="deleteInvestment()">x</span>
+                                    </button>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Años</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Desde el año</label>
+                            <input class="form-control" type="date" [(ngModel)]="optionInitDate" name="initDate"/>
+                        </div>
+                        <div class="col-6">
+                            <label>Hasta el año</label>
+                            <input class="form-control" type="date" [(ngModel)]="optionFinishDate" name="finishDate"/>
+                        </div>
+                    </div>
+                    <br>
+                    <h5 class="mb-0 mt-1">Gráficas</h5>
+                    <hr class="mt-2 mb-4">
+                    <div class="row">
+                        <div class="col-3">
+                            <label>Tipo de Gráfica</label>
+                            <select class="form-control" [(ngModel)]="optionGraphic" name="graphic">
+                                <option [ngValue]="undefined" hidden>{{selectorGraphic}}</option>
+                                <option *ngFor="let item of listGraphic" [ngValue]="item.DataBeanProperties.Value">{{item.DataBeanProperties.Property}}</option>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <label>Orientación</label>
+                            <select class="form-control" [(ngModel)]="optionDicrection" name="dicrection">
+                                <option [ngValue]="undefined" hidden>{{selectorDicrection}}</option>
+                                <option *ngFor="let item of listDicrection" [ngValue]="item.DataBeanProperties.Value">{{item.DataBeanProperties.Property}}</option>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <label>Ancho Imagen</label>
+                            <input class="form-control" type="number" [(ngModel)]="optionWidth" name="imageWidth" />
+                        </div>
+                        <div class="col-3">
+                            <label>Alto Imagen</label>
+                            <input class="form-control" type="number" [(ngModel)]="optionHeight" name="imageHeight" />
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-6">
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-green" style="float: right;" (click)="openReport(modalReport)" (click)="sendReport()">Generar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalReport>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Reporte</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="card bg-dark text-white" *ngFor="let item of listReport">
+                <div class="row" *ngIf="item.DataBeanProperties.viewData2">
+                    <div class="col-12">
+                        <label>Url-Descarga</label>
+                        <br>
+                        <a href={{item.DataBeanProperties.myLink}} target="_blank" style="color: white;">{{item.DataBeanProperties.Media}}</a>
+                    </div>
+                </div>
+                <br>
+                <div class="row" *ngIf="item.DataBeanProperties.viewData">
+                    <div class="col-12">
+                        <label>Gráfica</label>
+                        <br>
+                        <img src={{item.DataBeanProperties.myImage}} class="card-img">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button"  (click)="cerrar()">Cerrar</button>
+        </div>
+    </div>
+</ng-template>
+
+<ngx-spinner bdColor=" rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="ball-clip-rotate-multiple" [fullScreen]="true">
+    <p style="color: white "> Cargando... </p>
+</ngx-spinner>

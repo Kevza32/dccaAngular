@@ -1,0 +1,49 @@
+<nav class="sidenav shadow-right ">
+    <div class="sidenav-menu azul">
+        <div class="nav accordion" *ngFor="let item of listModule">
+            <div *ngIf="item.DataBeanProperties.vista">
+                <a class="nav-link collapsed letraG" href="javascript:void(0);" data-toggle="collapse"
+                    attr.data-target="#accordionSidenav{{item.DataBeanProperties.IDApplicationType}}"
+                    aria-expanded="false" aria-controls="collapseUtilities">
+                    <div class="nav-link-icon nav_externo"><i data-feather="tool"></i></div>
+                    {{item.DataBeanProperties.Name}}
+
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="accordionSidenav{{item.DataBeanProperties.IDApplicationType}}"
+                    data-parent="#accordionSidenav{{item.DataBeanProperties.IDApplicationType}}">
+                    <nav class="sidenav-menu-nested nav">
+                        <a *ngFor="let item2 of item.DataBeanProperties.submenu"
+                            [ngClass]="{'d-none': item2.Code == this.propiedadM}" class="nav-link nav_interno letraG"
+                            routerLink="{{item2.URL}}">
+                            {{item2.Name}}
+                        </a>
+                        <a class="nav-link nav_interno letraG d-none"
+                            [ngClass]="{'d-block':item.DataBeanProperties.IDApplicationType == 27}"
+                            routerLink="documentos-formulario-por-responder">
+                            Mis Trámites (Usuario)
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+        </div>
+        <div class="nav accordion" *ngIf="this.bandeja==true">
+            <div>
+                <a class="nav-link collapsed letraG" href="javascript:void(0);" data-toggle="collapse"
+                    data-target="#accordionSidenavw1" aria-expanded="false" aria-controls="collapseUtilities">
+                    <div class="nav-link-icon nav_externo"><i data-feather="tool"></i></div>
+                    Mi bandeja
+                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse" id="accordionSidenavw1" data-parent="#accordionSidenavw1">
+                    <nav class="sidenav-menu-nested nav">
+                        <a class="nav-link nav_interno letraG" routerLink="documentos-formulario-por-responder">
+                            Mis Trámites (Usuario)
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>

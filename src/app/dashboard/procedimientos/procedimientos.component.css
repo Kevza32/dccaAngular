@@ -1,0 +1,21 @@
+.icono {
+    overflow: initial;
+}
+
+.btn-outline-success:not(:disabled):not(.disabled).active, .btn-outline-success:not(:disabled):not(.disabled):active, .show>.btn-outline-success.dropdown-toggle {
+    background-image: url('../../../assets/img/checkblanco.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 41px;
+}
+
+.btn-outline-success2 {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-outline-success2:hover {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+}

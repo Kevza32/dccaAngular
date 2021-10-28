@@ -1,0 +1,342 @@
+<header class="page-header small-page page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto ">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Historial
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10" #contenedor2>
+    <ngx-spinner [name]="'spinnerPrincipal'" [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+        <p class="loading">Cargando...</p>
+    </ngx-spinner>
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="txtEmpresa">Usuario</label>
+                            <input type="text" [(ngModel)]="txtEmpresa" name="txtEmpresa" readonly
+                                (click)="tipoSeleccion()" id="txtEmpresa" class="form-control">
+                        </div>
+                        <app-modal-search class="d-none" (account)="getAccountBoos($event)"></app-modal-search>
+
+
+                        <div class="col-xs-12 col-12 col-md-3 form-group mb-3">
+                            <label for="txtProceso">Proceso</label>
+                            <select id="txtProceso" class="form-control" [(ngModel)]="procesos">
+                                <option value=""></option>
+                                <option *ngFor="let item of listaProcesosNegocio"
+                                    [value]="item.DataBeanProperties.IDBusinessProcess">
+                                    {{item.DataBeanProperties.Name}}</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-12 col-12 col-md-3 form-group mb-3">
+                            <label for="txtDateDesde">Fecha desde</label>
+                            <input [(ngModel)]="desde" id="txtDate" type="text" class="form-control" bsDatepicker
+                                [bsConfig]="{ adaptivePosition: true }">
+                        </div>
+                        <div class="col-xs-12 col-12 col-md-3 form-group mb-3">
+                            <label for="txtDateHasta">Fecha hasta</label>
+                            <input id="txtDate" [(ngModel)]="hasta" type="text" class="form-control" bsDatepicker
+                                [bsConfig]="{ adaptivePosition: true }">
+                        </div>
+                        <div class="col-xs-12 col-12 col-md-3 form-group mb-3">
+                            <label for="txtEstado">Estado</label>
+                            <select id="txtEstado" class="form-control" [(ngModel)]="estados">
+                                <option [value]=null></option>
+                                <option *ngFor="let item of listaEstados" [value]="item.DataBeanProperties.Property">
+                                    {{item.DataBeanProperties.Value}}</option>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <button class="btn btn-outline-success" (click)="listarHistorico()">
+                                Buscar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Solicitante</th>
+                                <th>Descripción del tramite</th>
+                                <th>Procedimiento</th>
+                                <th>Redicado</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <div>
+                                <ngx-spinner [name]="'spinnerTabla'" [fullScreen]="false"
+                                    type="ball-clip-rotate-multiple" size="medium">
+                                    <p class="loading">Cargando...</p>
+                                </ngx-spinner>
+                            </div>
+
+                            <tr
+                                *ngFor="let item of listaHistorico | paginate: {itemsPerPage: 10, currentPage: pageActual}">
+                                <td>{{item.DataBeanProperties.IDProcedureImp}}</td>
+                                <td>{{item.DataBeanProperties.AccountName}}</td>
+                                <td>{{item.DataBeanProperties.Description}}</td>
+                                <td>{{item.DataBeanProperties.ProcedureName}}</td>
+                                <td>{{item.DataBeanProperties.TicketCode}}</td>
+                                <td>{{item.DataBeanProperties.Since | date: 'medium'}}</td>
+                                <td>{{item.DataBeanProperties.StateName}}</td>
+                                <td>
+                                    <button tooltip="Historial Etapas del Proceso"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="abrirEtapas(item.DataBeanProperties,historialEtapas)">
+                                        <i class="fa fa-external-link" aria-hidden="true"></i>
+
+                                    </button>
+                                    <button tooltip="Historial de Gestion del Proceso"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="abrirHistorico(item.DataBeanProperties,historico)">
+                                        <i class="fas fa-history"></i>
+                                    </button>
+                                    <button tooltip="Consultar actividades pendientes"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="listActividades(item.DataBeanProperties,actividades)">
+                                        <i class="fa fa-flag" aria-hidden="true"></i>
+
+                                    </button>
+                                    <button tooltip="Generar siguiente etapa"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="getNextStage(item.DataBeanProperties)">
+                                        <i class="fas fa-step-forward"></i>
+                                    </button>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <pagination-controls (pageChange)="pageActual = $event"></pagination-controls>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<ng-template #historialEtapas>
+    <div class="modal-content">
+        <ngx-spinner [name]="'spinnerLinea'" [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+            <p class="loading">Cargando...</p>
+        </ngx-spinner>
+        <div class="card card-header-actions h-100">
+            <div class="card-header">
+                <h5 class="modal-title">Historial de etapas del proceso</h5>
+                <button class="close" type="button" (click)="modalRef.hide()" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>IDEtapa</th>
+                            <th>Nombre de Etapa</th>
+                            <th>Inicio de Etapa</th>
+                            <th>
+                                Salida de Etapa
+                            </th>
+                            <th>
+                                ¿Es condicional?
+                            </th>
+                            <th>
+                                ¿Es Etapa Actual?
+                            </th>
+                            <th>Acciones</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <div>
+                            <ngx-spinner [name]="'spinnerTabla'" [fullScreen]="false" type="ball-clip-rotate-multiple"
+                                size="medium">
+                                <p class="loading">Cargando...</p>
+                            </ngx-spinner>
+                        </div>
+                        <tr *ngFor="let item of historialEtapas2">
+                            <td>{{item.DataBeanProperties.IDStage}}</td>
+
+                            <td>{{item.DataBeanProperties.ProcedureName}}</td>
+                            <td>{{item.DataBeanProperties.Since}}</td>
+                            <td>
+                                <img *ngIf="item.DataBeanProperties.ResponseValue" src="assets/img/aprobado-32.png"
+                                    alt="Si">
+                                <img *ngIf="item.DataBeanProperties.ResponseValue == false"
+                                    src="assets/img/rechazado-32.png" alt="No">
+                            </td>
+                            <td>
+                                <img *ngIf="item.DataBeanProperties.IsConditional" src="assets/img/aprobado-32.png"
+                                    alt="Si">
+                                <img *ngIf="item.DataBeanProperties.IsConditional == false"
+                                    src="assets/img/rechazado-32.png" alt="No">
+                            </td>
+                            <td>
+                                <img *ngIf="item.DataBeanProperties.IsActualStage" src="assets/img/aprobado-32.png"
+                                    alt="Si">
+                            </td>
+                            <td><button tooltip="Definir como etapa actual del proceso"
+                                    class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                    (click)="definirEtapaActual(item.DataBeanProperties)">
+                                    <i class="fa fa-flag" aria-hidden="true"></i>
+
+                                </button>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #historico>
+    <div class="modal-content">
+        <ngx-spinner [name]="'spinnerLinea'" [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+            <p class="loading">Cargando...</p>
+        </ngx-spinner>
+        <div class="card card-header-actions h-100">
+            <div class="card-header">
+                <h5 class="modal-title">Historial de gestión del proceso</h5>
+                <button class="close" type="button" (click)="modalRef.hide()" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <div class="card-body">
+                <div class="overflow-auto datatable">
+                    <table class="table table-bordered table-hover overflow-auto table-bordered table-hover"
+                        id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Responsable/Encargado</th>
+                                <th>Documento</th>
+                                <th>Etapa</th>
+                                <th>Archivo</th>
+                                <th>Verificador</th>
+                                <th>Fecha de carga</th>
+                                <th>Fecha de Verificación</th>
+                                <th>Area</th>
+                                <th>Estado Respuesta</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <div>
+                                <ngx-spinner [name]="'spinnerTabla'" [fullScreen]="false"
+                                    type="ball-clip-rotate-multiple" size="medium">
+                                    <p class="loading">Cargando...</p>
+                                </ngx-spinner>
+                            </div>
+
+                            <tr *ngFor="let item of historialEtapas3 ">
+                                <td>{{item.DataBeanProperties.IDAction}}</td>
+                                <td>{{item.DataBeanProperties.AccountName}}</td>
+                                <td>{{item.DataBeanProperties.ProcedureActionName}}</td>
+                                <td>{{item.DataBeanProperties.ProcedureName}}</td>
+                                <td><a href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}"
+                                        target="_blank">{{item.DataBeanProperties.Media}}</a></td>
+                                <td>{{item.DataBeanProperties.VerifiedAccountName}}</td>
+                                <td>{{item.DataBeanProperties.UptoDate | date: 'medium'}}</td>
+                                <td>{{item.DataBeanProperties.VerifiedDate | date: 'medium'}}</td>
+                                <td>{{item.DataBeanProperties.FunctionalIDName}}</td>
+                                <td>{{item.DataBeanProperties.ResponseName}}</td>
+
+                                <td>{{item.DataBeanProperties.StateName}}</td>
+                                <td>
+
+                                    <button tooltip="Colocar requisito en estado de pendiente por respuesta"
+                                        class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                        (click)="requisitoRespuesta(item.DataBeanProperties)">
+                                        <i class="fa fa-map-marker" aria-hidden="true"></i>
+
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #actividades>
+    <div class="modal-content">
+        <ngx-spinner [name]="'spinnerLinea2'" [fullScreen]="false" type="ball-clip-rotate-multiple" size="medium">
+            <p class="loading">Cargando...</p>
+        </ngx-spinner>
+        <div class="card card-header-actions h-100">
+            <div class="card-header">
+                <h5 class="modal-title">Actividades pendientes</h5>
+                <button class="close" type="button" (click)="modalRef2.hide()" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Responsable/Encargado</th>
+                            <th>Documento</th>
+                            <th>Etapa</th>
+                            <th>Area</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of listActivities">
+                            <td>{{item.DataBeanProperties.AccountName}}</td>
+                            <td>{{item.DataBeanProperties.ProcedureActionName}}</td>
+                            <td>{{item.DataBeanProperties.ProcedureName}}</td>
+                            <td>{{item.DataBeanProperties.FunctionalIDName}}</td>
+                            <td>{{item.DataBeanProperties.StateName}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- <div class="timeline timeline-xs">
+    <div *ngFor="let item of historialEtapas" class="timeline-item">
+        <div class="timeline-item-marker">
+            <div class="timeline-item-marker-text">{{item.DataBeanProperties.UptoDate}}</div>
+            <div [ngClass]="{'bg-green':  item.DataBeanProperties.ResponseValue == true , 'bg-red': item.DataBeanProperties.ResponseValue == false , 'bg-yellow': item.DataBeanProperties.ResponseValue != false || true}"
+                class="timeline-item-marker-indicator "></div>
+        </div>
+        <div class="timeline-item-content">
+            <b>Estado:</b> {{item.DataBeanProperties.StateName}}
+            <br>
+            <b>Documento: </b> {{item.DataBeanProperties.ProcedureActionName}}
+            <br>
+            <b>Verificador: </b> {{item.DataBeanProperties.VerifiedAccountName}}
+            <br>
+            <b>Documento: </b> <a href="{{getUrl(item.DataBeanProperties.MediaContext, item.DataBeanProperties.Media)}}"
+                target="_blank">{{item.DataBeanProperties.Media}}</a>
+            <br>
+            <b>Solicitante : </b> {{item.DataBeanProperties.AccountName}}
+            <br>
+            <b>Área: </b> {{item.DataBeanProperties.FunctionalIDName}}
+            <br>
+
+        </div>
+    </div>
+</div> -->

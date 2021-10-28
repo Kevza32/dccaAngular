@@ -1,0 +1,137 @@
+<button class="btn btn-outline-green" id="btnModalUnidadMilitar" (click)="openUnidad(modalUnit)">Buscar</button>
+
+<!-- <ng-template #modalUnit>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Unidad Militar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-4">
+                    <label>Buscar por Nombre</label>
+                    <div class="input-group input-group-joined">
+                        <input class="form-control" type="text" placeholder="Nombre..." aria-label="Search"
+                            [(ngModel)]="optionFirst" name="buscarNombre">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-green" type="button" (click)="searchName()"><i
+                                    class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="p-3">
+                        <button title="Agregar Unidades" class="btn btn-outline-green" type="button"
+                            (click)="openUnidadNew(modalUnidad)" (click)="modifyUnidad(0, 'Crear')"
+                            (click)="cleanUnit()">Agregar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <nav aria-label="breadcrumb" class="p-3">
+                        <ol class="breadcrumb mb-0 mt-4 alert-primary">
+                            <li class="breadcrumb-item liraiz" *ngFor="let item of listAux"><a
+                                    (click)="getSelection(item.idValor)">{{item.valorData}}</a></li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            <br>
+            <div class="row">
+                <div class="col-12">
+                    <div class="list-group grupotabla">
+                        <ul class="hijoss" *ngIf="viewData">
+                            <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            <li class="itemh list-group-item " *ngFor="let item of listTree">
+                                <button title="Seleccionar Unidad"
+                                    class="btn btn-datatable btn-icon btn-transparent-dark" type="button"
+                                    (click)="getSelection(item.EnvolvedObject.DataBeanProperties.IDLn)"
+                                    (click)="getIdUnit(item.EnvolvedObject.DataBeanProperties.IDLn)">
+                                    <i class="fas fa-check-square"></i>
+                                </button>
+                                <span class="txt_r">{{decodeval(item.EnvolvedObject.DataBeanProperties.Name)}}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <br>
+                    <h4>Guardar: {{nombre}}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-success" type="button" (click)="saveUnidad()">Seleccionar</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalUnidad tabindex="1">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS}}</h5>
+            <button class="close" type="button" (click)="cerrarVentana()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-6">
+                    <label>Sigla</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionName" name="nameUnit" />
+                </div>
+                <div class="col-6">
+                    <label>Nombre de Unidad</label>
+                    <input class="form-control" type="text" [(ngModel)]="optionDescription" name="description" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrarVentana()">Cerrar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="sendUnidad()">{{titleBS}}</button>
+        </div>
+    </div>
+</ng-template> -->
+
+
+<ng-template #modalUnit>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Buscar Unidad por Sigla</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="col-12">
+                <div class="">
+                    <label>Buscar por Sigla</label>
+                    <div class="input-group input-group-joined">
+                        <input class="form-control" type="text" placeholder="Nombre..." aria-label="Search"
+                            [(ngModel)]="txtSigla" name="buscarNombre">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-green" type="button" (click)="searchSigla()"><i
+                                    class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="list-group w-100 my-5" *ngIf="listTree != null">
+                    <ul class="hijoss m-0 p-0">
+                        <li class="itemh list-group-item ">
+                            <span class="txt_r">{{this.listTree.DataBeanProperties.SIGLA}} /
+                                {{this.listTree.DataBeanProperties.DESCRIPCION_DEPENDENCIA}}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn btn-outline-success m-1" type="button" (click)="saveUnidad()">Seleccionar</button>
+        </div>
+    </div>
+
+</ng-template>

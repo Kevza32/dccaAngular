@@ -1,0 +1,128 @@
+<header class="page-header page-small page-header-dark bg-gradient-primary-to-secondary pb-10">
+    <div class="container-fluid">
+        <div class="page-header-content pt-3">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i data-feather="activity"></i></div>
+                        Propiedades del Sistema
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="container-fluid mt-n10 ">
+    <div class="row">
+        <div class="col-xxl-4 col-xl-12 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <label>Crear System&nbsp;&nbsp;</label>
+                    <button type="button" class="btn btn-outline-green" (click)="openComponente(modalComponente)" (click)="modifyComponente(0 , 'Crear')" (click)="clearComponente()">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="card-body h-100 d-flex flex-column justify-content-center py-5 py-xl-4">
+                    <!-- <div class="row">
+                        <div class="col-6">
+                            <label>Buscar</label>
+                            <input class="form-control" type="text" [(ngModel)]="filterPost" />
+                        </div>
+                    </div>
+                    <br> -->
+                    <div class="datatable">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                    <th>AppName</th>
+                                    <th>SystemValue</th>
+                                    <th>Accion</th>
+                                </tr>
+                            </thead>
+                            <!-- | filterModelo:filterPost -->
+                            <tbody>
+                                <div class="fa-3x" [ngClass]="{'d-none': !spinner}">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                                <tr *ngFor="let item of listSystem | paginate: {itemsPerPage: 15, currentPage: pageActual}">
+                                    <td>{{item.DataBeanProperties.IDSystemProperty}}</td>
+                                    <td>{{item.DataBeanProperties.Name}}</td>
+                                    <td>{{item.DataBeanProperties.Description}}</td>
+                                    <td>{{item.DataBeanProperties.AppName}}</td>
+                                    <td>{{item.DataBeanProperties.SystemValue}}</td>
+                                    <td>
+                                        <button title="Editar Capítulo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openComponente(modalComponente)" (click)="modifyComponente(item.DataBeanProperties.IDSystemProperty , 'Editar')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button title="Eliminar Capítulo" class=" btn-datatable btn-icon btn-transparent-dark" type="button" (click)="openDelete(item.DataBeanProperties.IDSystemProperty, modalDelete)">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <pagination-controls (pageChange)="pageActual = $event"></pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #modalComponente>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-6">
+                    <label>Nombre</label>
+                    <input class="form-control" type="text" [(ngModel)]="opcionNombre" name="nombre" />
+                </div>
+                <div class="col-6">
+                    <label>Descripción</label>
+                    <input class="form-control" type="text" [(ngModel)]="opcionDescripcion" name="nombre" />
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-6">
+                    <label>App Name</label>
+                    <input class="form-control" type="text" [(ngModel)]="AppName" name="nombre" />
+                </div>
+                <div class="col-6">
+                    <label>System Value</label>
+                    <input class="form-control" type="text" [(ngModel)]="SystemValue" name="nombre" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="sendComponente()">{{titleBS}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalDelete>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cancelar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteComponente()">Confirmar</button>
+        </div>
+    </div>
+</ng-template>

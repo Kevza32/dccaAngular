@@ -1,0 +1,73 @@
+<div class="card-body">
+
+    <div class="card-body py-5">
+        <div class="card-group justify-content-center">
+            <div class="card m-1">
+                <div class="card-body d-flex flex-wrap align-content-between2">
+                    <div class="w-100">
+
+                        <h5 class="card-title">Usuario</h5>
+                        <hr>
+                        <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+                        <p class="card-text mb-1"><strong>Cedula: </strong>
+                            {{cedula}}
+                        </p>
+                        <p class="card-text mb-1"><strong>Nombre: </strong>
+                            {{nameUser}}
+                        </p>
+                        <p class="card-text mb-1"><strong>Apellido: </strong>
+                            {{surname}}</p>
+                    </div>
+                    <div class="w-100">
+
+                        <button (click)="abrirUsuario()" class="btn btn-primary m-1">Buscar Usuario <i
+                                class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                        <button (click)="limpiarUS()" class="m-1 btn btn-secondary">Limpiar
+                            Usuario <i class="fa fa-refresh" aria-hidden="true"></i>
+                        </button>
+                        <app-modal-search class="d-none" (account)="getAccount($event)">
+                        </app-modal-search>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card m-1">
+
+                <div class="card-body d-flex flex-wrap align-content-between2">
+                    <div class="w-100">
+
+                        <h5 class="card-title">Grupo de trabajo</h5>
+                        <hr>
+                        <p class="card-text mb-1"><strong>Grupo: </strong>
+                            {{nameUNit}}
+                        </p>
+                    </div>
+
+                    <div class="w-100">
+
+                        <button (click)="abrirUnidad()" class="btn btn-primary m-1">Buscar Grupo<i
+                                class="ml-1 fa fa-search" aria-hidden="true"></i>
+                        </button>
+                        <button (click)="limpiarGrupo()" class="m-1 btn btn-secondary">Limpiar
+                            Grupo<i class="ml-1 fa fa-refresh" aria-hidden="true"></i>
+                        </button>
+                        <app-modal-unit class="d-none" (idInputUnit)="getUnit($event)"
+                            (nameUnitINput)="getNameUnit($event)">
+                        </app-modal-unit>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="row mt-5 justify-content-center">
+            <div class="col-4">
+                <button class="btn btn-outline-green" [disabled]="cedula == null && nameUNit == null" type="button"
+                    style="float: left;" (click)="addUserW()">Activar</button>
+                <button class="btn btn-outline-danger" [disabled]="cedula == null && nameUNit == null" type="button"
+                    style="float: right;" (click)="removeUserW()">Desactivar</button>
+            </div>
+        </div>
+
+    </div>
+</div>

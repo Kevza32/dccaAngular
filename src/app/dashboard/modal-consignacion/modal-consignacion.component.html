@@ -1,0 +1,131 @@
+<div class="row">
+    <div class="col-12">
+        <h5 class="m-1">SOLICITUD CONSIGNACIÓN DINEROS</h5>
+
+    </div>
+</div>
+<br>
+<div class="datatable" style="overflow-x: auto">
+    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fecha</th>
+                <th>Valor</th>
+                <th>Observación</th>
+                <th>Archivo</th>
+                <th>Acciones <button title="Agregar" class=" btn btn-outline-green m-1"
+                        type="button" (click)="openModal(consignacionAdd)">
+                        <i class="fas fa-plus"></i>
+                    </button></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of lista_Consigment | paginate: {itemsPerPage: 15, currentPage: pageTable3}">
+                <td>{{item.DataBeanProperties.IDConsigment}}</td>
+                <td>{{item.DataBeanProperties.ConsigmentDate}}</td>
+                <td style="text-align:right;">{{item.DataBeanProperties.CashValue | currency: 'COP':'symbol-narrow':'3.0'}}</td>
+                <td>{{item.DataBeanProperties.Observations}}</td>
+                <td>
+                    <a href={{item.DataBeanProperties.myLink}} target="_blank">{{item.DataBeanProperties.Media}}</a>
+                </td>
+                <td>
+                    <button title="Editar" class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                        (click)="setConsignaciones(item.DataBeanProperties, consignacionAdd,1)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button title="Eliminar" class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                        (click)="setConsignaciones(item.DataBeanProperties, consignacion,2)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <pagination-controls (pageChange)="pageTable3 = $event"></pagination-controls>
+    <button class="btn btn-outline-success mb-2" (click)="childModal.show()">Validar Formulario</button>
+</div>
+
+<ng-template #consignacionAdd>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Consignaciones</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="cerrarCOnsignacion()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Valor</label>
+                    <input class="form-control" currencyMask  [(ngModel)]="bean_Consigment.CashValue">
+                </div>
+                <div class="col-md-4">
+                    <label>Fecha</label>
+                    <input class="form-control" type="date" [(ngModel)]="bean_Consigment.ConsigmentDate">
+                </div>
+                <div class="col-md-4">
+                    <label>Subir Archivo</label>
+                    <br>
+                    <label for="file-upload2" class="custom-file-upload">
+                        <i class="fa fa-cloud-upload"></i> Cargar Archivo
+                    </label>
+                    <br>
+                    <input id="file-upload2" type="file" placeholder="Seleccionar foto"
+                        (change)="cargarFile($event.target.files)" />
+                    <div>
+                        <a *ngIf="ruta != ''" href="{{ruta}}" target="_blank">{{nombreArchivo}}</a>
+                        <a *ngIf="mostrarDocumento">{{nombreArchivo2}}</a>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-12">
+                    <label>Observaciones</label>
+                    <textarea class="form-control" [(ngModel)]="bean_Consigment.Observations"></textarea>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-6">
+
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary mb-4" style="float: right;"
+                        (click)="updateConsigment()">Agregar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</ng-template>
+
+<div class="modal fade" bsModal #childModal="bs-modal" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-nested-name2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content sugundo_m">
+            <div class="modal-header ">
+                <h4 id="dialog-nested-name2" class="modal-title pull-left">Validar formulario</h4>
+                <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarAprobacion"
+                    (click)="childModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtDescripcion">Descripción</label>
+                        <textarea class="form-control" id="txtDescripcion" [(ngModel)]="txtDes"></textarea>
+                    </div>
+                    <button class="btn btn-outline-success m-1" (click)="aprobar()">Aprobar</button>
+                    <button class="btn btn-outline-danger m-1" (click)="rechazar()">Rechazar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

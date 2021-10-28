@@ -1,0 +1,652 @@
+<header class="
+    page-header page-small page-header-dark
+    bg-gradient-primary-to-secondary
+    pb-10
+  ">
+  <div class="container-fluid">
+    <div class="page-header-content pt-3">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-auto">
+          <h1 class="page-header-title">
+            <div class="page-header-icon"><i data-feather="activity"></i></div>
+            Convenios de Colaboración
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="container-fluid mt-n10">
+  <div class="row">
+    <div class="col-xxl-4 col-xl-12 mb-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-2">
+              <label>Tercero</label>
+              <br />
+              <app-modal-search (account)="getAccount($event)"></app-modal-search>
+              <!-- <button class="btn btn-outline-green" (click)="openTercero(modalTercero)" (click)="clearSearch()">Buscar</button> -->
+            </div>
+            <div class="col-4">
+              <label>Tercero Seleccionado</label>
+              <input class="form-control" disabled="»disabled»" type="text" placeholder="{{ nameUser }}" />
+            </div>
+          </div>
+        </div>
+        <div class="
+            card-body
+            h-100
+            d-flex
+            flex-column
+            justify-content-center
+            py-5 py-xl-4
+          ">
+          <div class="row ml-1">
+            <!-- <div class="col-6">
+                            <label>Año</label>
+                            <select class="form-control" type="number" [(ngModel)]="optionAnio" name="buscarAnio" (change)="searchAnio()"> 
+                                <option *ngFor="let anio of listAnios" [ngValue]="anio">{{anio}}</option>
+                            </select>
+                        </div> -->
+            <div *ngIf="viewButton" class="col-md-4">
+              <label for="txtIni">Fecha inicio proceso</label>
+              <input class="form-control" type="date" [(ngModel)]="fechaIni" />
+            </div>
+            <div *ngIf="viewButton" class="col-md-4">
+              <label for="txtIni">Fecha inicio proceso</label>
+              <input class="form-control" type="date" [(ngModel)]="fechaFin" />
+            </div>
+
+            <!-- <div class="col-2" *ngIf="viewButton">
+                            <label>Convenios</label>
+                            <br>
+                            <button class="btn btn-outline-green" (click)="searchAnio()">Buscar</button>
+                        </div> -->
+            <div *ngIf="viewButton && fechaIni" class="col-12 my-2">
+              <button class="btn btn-outline-green" (click)="searchAnio()">
+                Buscar
+              </button>
+            </div>
+          </div>
+          <br />
+          <div class="datatable">
+            <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Año</th>
+                  <th>No.</th>
+                  <th>Fecha Subsripción</th>
+                  <th>Fecha Finalización</th>
+                  <th>Valor en especie (A)</th>
+                  <th>Valor en Dinero</th>
+                  <th>Vr Total</th>
+                  <th>Accion</th>
+                </tr>
+              </thead>
+              <!-- | filterDocument:filterPost -->
+              <tbody>
+                <div class="fa-3x" [ngClass]="{ 'd-none': !spinner }">
+                  <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <tr *ngFor="
+                    let agreement of listAgreement
+                      | paginate: { itemsPerPage: 15, currentPage: pageActual }
+                  ">
+                  <td>{{ agreement.DataBeanProperties.IDAgreement }}</td>
+                  <td>{{ agreement.DataBeanProperties.ValidityYear }}</td>
+                  <td>{{ agreement.DataBeanProperties.Consecutive }}</td>
+                  <td>{{ agreement.DataBeanProperties.SubscriptionDate }}</td>
+                  <td>{{ agreement.DataBeanProperties.FinishDate }}</td>
+                  <td class="text-right">
+                    {{
+                    agreement.DataBeanProperties.AgreementSpeciesValue
+                    | currency: "USD"
+                    | lowercase
+                    }}
+                  </td>
+                  <td class="text-right">
+                    {{
+                    agreement.DataBeanProperties.AgreementMoneyValue
+                    | currency: "USD"
+                    | lowercase
+                    }}
+                  </td>
+                  <td class="text-right">
+                    {{
+                    agreement.DataBeanProperties.myTotal
+                    | currency: "USD"
+                    | lowercase
+                    }}
+                  </td>
+                  <td>
+                    <button title="Beneficiarios" class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                      (click)="openUsers(modalUsers)" (click)="
+                        loadUsers(agreement.DataBeanProperties.IDAgreement)
+                      ">
+                      <i class="fas fa-users"></i>
+                    </button>
+                    <button title="Presupuesto" class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                      (click)="openDolar(modalDolar)" (click)="
+                        loadInvestment(agreement.DataBeanProperties.IDAgreement)
+                      ">
+                      <i class="fas fa-dollar-sign"></i>
+                    </button>
+                    <button title="Historico" class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                      (click)="openHistoric(modalHistoric)" (click)="
+                        loadHistoric(agreement.DataBeanProperties.IDAgreement);
+                        popularAgreement(agreement.DataBeanProperties)
+                      ">
+                      <i class="fas fa-clock"></i>
+                    </button>
+                    <!-- (click)="loadHistoric(agreement.DataBeanProperties.IDAgreement)" -->
+                    <!-- <button title="Tipo Documento"
+                                            class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                                            (click)="openType(modalType)">
+                                        </button> -->
+                    <button title="Agregar/Editar Documentos del Convenio"
+                      class="btn-datatable btn-icon btn-transparent-dark" type="button" (click)="
+                        openType(
+                          agreement.DataBeanProperties.IDAgreement,
+                          modalType
+                        );
+                      ">
+                      <i class="fas fa-file"></i>
+                    </button>
+                    <button title="Reporte F29" class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                      (click)="
+                        generarF29(
+                          agreement.DataBeanProperties.IDAgreement,
+                          documentos
+                        )
+                      ">
+                      <i class="fa fa-bar-chart" aria-hidden="true"></i>
+                    </button>
+                    <button title="Consignaciones" class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                      (click)="
+                        consignaciones(
+                          agreement.DataBeanProperties.IDAgreement,
+                          consignacion
+                        )
+                      ">
+                      <i class="fas fa-money-check-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <pagination-controls (pageChange)="pageActual = $event"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalAgreement>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{{ titleMS }}</h5>
+      <button class="close" type="button" (click)="cerrar()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">
+        Cerrar
+      </button>
+      <button class="btn btn-outline-success m-1" type="button" (click)="sendAgreement()">
+        {{ titleBS }}
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalUsers>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Tabla Beneficiarios</h5>
+      <button class="close" type="button" (click)="cerrar()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="datatable">
+        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Nombre Unidad</th>
+              <th>Valor en especie (A)</th>
+              <th>Valor en dinero (B)</th>
+              <th>Valor Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="
+                let item of listBeneficiary
+                  | paginate: { itemsPerPage: 15, currentPage: pageTable1 }
+              ">
+              <td>{{ item.DataBeanProperties.IDBeneficiary }}</td>
+              <td>{{ item.DataBeanProperties.Sigla }}</td>
+              <td style="text-align: right">
+                {{
+                item.DataBeanProperties.AgreementSpeciesValue
+                | currency: "USD"
+                | lowercase
+                }}
+              </td>
+              <td style="text-align: right">
+                {{
+                item.DataBeanProperties.AgreementMoneyValue
+                | currency: "USD"
+                | lowercase
+                }}
+              </td>
+              <td style="text-align: right">
+                {{
+                item.DataBeanProperties.myTotal | currency: "USD" | lowercase
+                }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls (pageChange)="pageTable1 = $event"></pagination-controls>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalDolar>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Tabla Presupuesto</h5>
+      <button class="close" type="button" (click)="cerrar()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="datatable">
+        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Capitulo de Apoyo</th>
+              <th>Valor en especie (A)</th>
+              <th>Valor en dinero (B)</th>
+              <th>Valor Total</th>
+              <th>Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="
+                let item of listInvestment
+                  | paginate: { itemsPerPage: 15, currentPage: pageTable2 }
+              ">
+              <td>{{ item.DataBeanProperties.IDChapterInvestment }}</td>
+              <td>{{ item.DataBeanProperties.Name }}</td>
+              <td style="text-align: right">
+                {{
+                item.DataBeanProperties.AgreementSpeciesValue
+                | currency: "USD"
+                | lowercase
+                }}
+              </td>
+              <td style="text-align: right">
+                {{
+                item.DataBeanProperties.AgreementMoneyValue
+                | currency: "USD"
+                | lowercase
+                }}
+              </td>
+              <td style="text-align: right">
+                {{
+                item.DataBeanProperties.myTotal | currency: "USD" | lowercase
+                }}
+              </td>
+              <td>{{ item.DataBeanProperties.Observations }}</td>
+              <!-- Observations -->
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls (pageChange)="pageTable2 = $event"></pagination-controls>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalHistoric>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Tabla Histórico</h5>
+      <button class="close" type="button" (click)="cerrar()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="datatable" style="overflow-x: auto">
+        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Etapa del proceso</th>
+              <th>Estado</th>
+              <th>Responsable de Ingreso de Documentos / Formuarios</th>
+              <th>Verificador</th>
+              <th>Entrada/Salida</th>
+              <th>Tipo de Documento</th>
+              <th>Fecha Ingreso Documentos</th>
+              <th>Fecha Verificación</th>
+              <th>Fecha Inicio Etapa</th>
+              <th>Documento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="
+                let item of listHistoric
+                  | paginate: { itemsPerPage: 15, currentPage: pageTable3 }
+              ">
+              <td>{{ item.DataBeanProperties.IDAction }}</td>
+              <td>{{ item.DataBeanProperties.Stage }}</td>
+              <td>{{ item.DataBeanProperties.ActionState }}</td>
+              <td>{{ item.DataBeanProperties.AccountName }}</td>
+              <td>{{ item.DataBeanProperties.VerifierName }}</td>
+              <td>{{ item.DataBeanProperties.Type }}</td>
+              <td>{{ item.DataBeanProperties.DocumentType }}</td>
+              <td>{{ item.DataBeanProperties.SubmitDate }}</td>
+              <td>{{ item.DataBeanProperties.VerifiedDate }}</td>
+              <td>{{ item.DataBeanProperties.Since }}</td>
+              <td *ngIf="item.DataBeanProperties.myLink">
+                <!-- <a href={{item.DataBeanProperties.myLink}} target="_blank">{{item.DataBeanProperties.Media}}</a> -->
+                <button title="Archivo" class="btn-datatable btn-icon btn-transparent-dark" type="button"
+                  (click)="abrirSubirArchivo(archivo, item.DataBeanProperties)" target="_blank">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </td>
+              <td class="link" *ngIf="item.DataBeanProperties.FormURLComponent"
+                (click)="abrirModal(formularioG, item.DataBeanProperties)">
+                {{ item.DataBeanProperties.FormURLComponent }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination-controls (pageChange)="pageTable3 = $event"></pagination-controls>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalDelete>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Eliminar</h5>
+      <button class="close" type="button" (click)="cerrar()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">
+        Cancelar
+      </button>
+      <button class="btn btn-outline-success m-1" type="button" (click)="deleteAgreement()">
+        Confirmar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modalType>
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">Documentos del Convenio</h5>
+      <button class="close" type="button" (click)="cerrar()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-tipo-documento-modal [idAgreement]="idAgreeModal"></app-tipo-documento-modal>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">
+        Cerrar
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #formularioG>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left"></h4>
+    <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarP" id="btnCerrarModalG"
+      (click)="this.modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div [ngSwitch]="beanProcedureAction.FormURLComponent">
+      <!-- <app-formulario-generico *ngSwitchCase="'formulario-convenio'" [IdAction]="beanProcedureAction.IDAction"
+                [IdProcedureImp]="beanProcedureActionIMP.IDProcedureImp" [IdStage]="beanProcedureAction.IDStage"
+                (resultadoForm)="obtenerProcedimientoAcccion($event)">
+            </app-formulario-generico> -->
+
+      <div *ngSwitchCase="'formulario-convenio'">
+        <h4>Formulario Convenio</h4>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="IDSector">Sector</label>
+            <select class="form-control" disabled [(ngModel)]="beanAgreement2.DataBeanProperties.IDSector" id="IDSector"
+              name="IDSector">
+              <option value="1">MINERO</option>
+              <option value="2">HIDROCARBUROS</option>
+              <option value="3">ENERGETICO</option>
+              <option value="4">CONSTRUCCION DE LA INFRAESTRUCTURA</option>
+            </select>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtEmpresa">Empresa</label>
+            <input type="text" name="txtEmpresa" [(ngModel)]="beanAgreement2.DataBeanProperties.AccountName" readonly
+              id="txtEmpresa" class="form-control" />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtRepresentanteLE">Razón social</label>
+            <input type="text" [(ngModel)]="beanAgreement2.DataBeanProperties.EntityName" name="txtRepresentanteLE"
+              id="txtRepresentanteLE" class="form-control" readonly />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtRepresentanteLE">Representante Legal</label>
+            <input type="text" name="txtRepresentanteLE" [(ngModel)]="beanAgreement2.DataBeanProperties.ResponsibleName"
+              id="txtRepresentanteLE" class="form-control" readonly />
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="txtPersonaCon">Persona contacto</label>
+            <input type="text" name="txtPersonaCon" [(ngModel)]="beanAgreement2.DataBeanProperties.ContactName"
+              id="txtPersonaCon" class="form-control" readonly />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtConsecutivo">Número de convenio ministerio</label>
+            <input type="text" readonly name="txtConsecutivo" id="txtConsecutivo" class="form-control"
+              [(ngModel)]="beanAgreement2.DataBeanProperties.Consecutive" />
+          </div>
+          <!-- <div class="form-group col-md-4">
+                        <label for="txtAnioVigen">Año vigencia</label>
+                        <select id="txtAnioVigen" class="form-control" disabled [(ngModel)]="beanAgreement2.DataBeanProperties.ValidityYear">
+                            <option value="" disabled hidden></option>
+                            <option *ngFor="let anio of listAnios" [ngValue]="anio">{{anio}}</option>
+                        </select>
+                    </div> -->
+          <div class="form-group col-md-6">
+            <label for="txtIniFechaSub">Fecha de inicio suscripción</label>
+            <input type="date" name="txtFechaSub" disabled id="txtFechaSub" class="form-control" value="{{
+                obtenerFecha(beanAgreement2.DataBeanProperties.SubscriptionDate)
+              }}" />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtFinFechaSub">Fecha de finalización suscripción</label>
+            <input type="date" disabled name="txtFechaSub" id="txtFechaSub" class="form-control" value="{{
+                obtenerFecha(beanAgreement2.DataBeanProperties.FinishDate)
+              }}" />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtValorApoDinero">Valor aporte dinero</label>
+            <input type="text" disabled name="txtValorApoDinero" id="txtValorApoDinero" class="form-control InputP"
+              [value]="
+                beanAgreement2.DataBeanProperties.AgreementMoneyValue
+                  | currency: 'COP':'symbol-narrow':'3.0'
+              " />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="txtValorAporEsp">Valor aporte especie</label>
+            <input type="text" disabled name="txtValorAporEsp" id="txtValorAporEsp" class="form-control InputP" [value]="
+                beanAgreement2.DataBeanProperties.AgreementSpeciesValue
+                  | currency: 'COP':'symbol-narrow':'3.0'
+              " />
+          </div>
+        </div>
+      </div>
+
+      <div *ngSwitchCase="'formulario-beneficiarios'">
+        <app-formulario-beneficiarios [BeanAgreement]="beanAgreement" [BeanProcedureAction]="beanProcedureAction">
+        </app-formulario-beneficiarios>
+      </div>
+      <div *ngSwitchCase="'formulario-capitulo-apoyo'">
+        <app-formulario-plan-inversion [BeanAgreement]="beanAgreement" [BeanProcedureAction]="beanProcedureAction">
+        </app-formulario-plan-inversion>
+      </div>
+      <div *ngSwitchCase="'formulario-articulo-presupuestales'">
+        <app-formulario-articulo-p [BeanAgreement]="beanAgreement" [BeanProcedureAction]="beanProcedureAction">
+        </app-formulario-articulo-p>
+      </div>
+      <div *ngSwitchCase="'formulario-plan-necesidad'">
+        <app-formulario-plan-necesidad [BeanAgreement]="beanAgreement" [BeanProcedureAction]="beanProcedureAction">
+        </app-formulario-plan-necesidad>
+      </div>
+      <div *ngSwitchCase="'PLANIVERSION'">
+        <app-formulario-plan-necesidades [BeanAgreement]="beanAgreement" [BeanProcedureAction]="beanProcedureAction">
+        </app-formulario-plan-necesidades>
+      </div>
+      <div *ngSwitchCase="'Form-Consignaciones'">
+        <app-modal-consignacion [idAgreement]="beanAgreement.IDAgreement" [BeanProcedureAction]="beanProcedureAction">
+        </app-modal-consignacion>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #documentos>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Reporte F29</h4>
+    <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarP" id="btnCerrarModalG"
+      (click)="this.modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="documentnReportF29 == null">
+      <h4>No tiene reportes F29</h4>
+    </div>
+    <div *ngIf="documentnReportF29 != null">
+      <div *ngFor="let item of documentnReportF29">
+        <a href="{{ item.DataBeanProperties.URLLink }}" target="_blank">{{
+          item.DataBeanProperties.Media
+          }}</a>
+      </div>
+      <!-- <a href="{{documentnReportF29.URLLink}}" target="_blank">{{documentnReportF29.Media}}</a> -->
+    </div>
+  </div>
+  <div class="modal-footer"></div>
+</ng-template>
+<ng-template #consignacion>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Consignaciones</h4>
+    <button type="button" class="close pull-right" aria-label="Close" id="btnCerrarP" id="btnCerrarModalG"
+      (click)="this.modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <app-modal-consignacion [idAgreement]="agreement"></app-modal-consignacion>
+  </div>
+  <div class="modal-footer"></div>
+</ng-template>
+
+<ng-template #archivo>
+  <div class="modal-header">
+    <h6 class="modal-title pull-left">
+      Cargar archivo <br />
+      {{ beanProcedureAction.Name }}
+    </h6>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-row">
+      <div class="col-12">
+        <small class="text-danger">*Se recomienda subir archivo .pdf o .rar, tamaño recomendado
+          50mb</small>
+      </div>
+      <br />
+      <div class="col-12">
+        <label for="fileS" class="btn btn-success">Subir archivo <i class="fas fa-upload"></i></label>
+        <input type="file" id="fileS" (change)="cargarFile($event.target.files)" />
+        <a href="{{getUrl(beanProcedureAction.MediaContext,this.beanProcedureAction.Media)}}" target="_blank"><small>{{
+            beanProcedureAction.Media }}</small>
+        </a>
+      </div>
+    </div>
+    <!-- <div class="form-row">
+            <div class="col-12">
+                <button class="btn btn-success" (click)="abrirAnexo(anexo)">Subir anexos</button>
+            </div>
+        </div> -->
+    <div class="form-row">
+      <div class="datatable">
+        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripcion</th>
+              <th>Archivo</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of listaAnexos">
+              <td>{{ item.DataBeanProperties.Name }}</td>
+              <td>{{ item.DataBeanProperties.Description }}</td>
+              <td>
+                <a href="{{
+                    getUrl(
+                      item.DataBeanProperties.MediaContext,
+                      item.DataBeanProperties.Media
+                    )
+                  }}" target="_blank">{{ item.DataBeanProperties.Media }}</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</ng-template>

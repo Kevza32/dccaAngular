@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "../node_modules/ngx-toastr/toastr.css";
+@import url("../node_modules/ngx-bootstrap/datepicker/bs-datepicker.css");
+.datatable table#dataTable thead, .datatable table#dataTable tfoot {
+    /* color: rgb(0, 108, 208); */
+    color: rgb(31, 59, 8, 1);
+}
+
+.fondoG {
+    background-color: #F7F7F7;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+.btn-outline-green {
+    color: #00ac69 !important;
+    border-color: #00ac69 !important;
+}
+
+.btn-outline-green:hover {
+    color: white !important;
+    border-color: #00ac69 !important;
+}
+
+.foazul {
+    background: #2A3F54;
+    color: #a2acba;
+}
+
+.page-small {
+    height: 170px;
+}
+
+.InputP {
+    text-align: end
+}
+
+.mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
+    background: red !important;
+}
+
+.mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+    color: red !important;
+}
+
+.sugundo_m {
+    border: 2px solid #2A3F54;
+}

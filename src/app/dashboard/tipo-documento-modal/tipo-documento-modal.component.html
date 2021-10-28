@@ -1,0 +1,132 @@
+<div class="row">
+    <!-- <div class="col-6">
+        <label>Buscar</label>
+        <input class="form-control" type="text" [(ngModel)]="filterPost" />
+    </div> -->
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="cbxSucursal">Tipo de Documentos</label>
+            <select class="form-control" [(ngModel)]="opcionType" name="selectorModel">
+                <option [ngValue]="undefined" hidden>{{selectorType}}</option>
+                <option [ngValue]="model.DataBeanProperties.IDAgreementDocument" *ngFor="let model of listDocument">
+                    {{model.DataBeanProperties.Name}}</option>
+            </select>
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="cbxEtapa">Etapa del conevio</label>
+            <select id="cbxEtapa" class="form-control" [(ngModel)]="opcionEtapa" (change)="validateType()"
+                name="selectorModel">
+                <option [ngValue]="undefined" hidden>{{selectorType}}</option>
+                <option [ngValue]="model.DataBeanProperties.IDBusinessState" *ngFor="let model of listaEtapas">
+                    {{model.DataBeanProperties.Name}}</option>
+            </select>
+        </div>
+    </div>
+    <div *ngIf="viewBoton" class="col-4">
+        <br>
+        <label>Crear Documento &nbsp;&nbsp;</label>
+        <button type="button" class="btn btn-outline-green" (click)="openDocument(modalDocument)"
+            (click)="modifyDocument(0 , 'Crear')" (click)="cleanDocument()">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+    </div>
+</div>
+<br>
+<div class="datatable">
+    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Archivo</th>
+                <th>Descripción</th>
+                <th>Etapa</th>
+                <!-- <th>Accion</th> -->
+            </tr>
+        </thead>
+        <!-- | filterDocument:filterPost -->
+        <tbody>
+            <tr *ngFor="let item of listAttachment | paginate: {itemsPerPage: 15, currentPage: pageActual}">
+                <td>{{item.DataBeanProperties.IDAgreementAttached}}</td>
+                <td>{{item.DataBeanProperties.DocumentName}}</td>
+                <td>
+                    <a href={{item.DataBeanProperties.myLink}} target="_blank">{{item.DataBeanProperties.Media}}</a>
+                </td>
+                <td>
+                    {{item.DataBeanProperties.Description}}
+                </td>
+                <td>{{item.DataBeanProperties.BusinessStateName}}</td>
+                <!-- <td> -->
+                <!-- <button title="Editar Documento" class=" btn-datatable btn-icon btn-transparent-dark" type="button"
+                        (click)="openDocument(modalDocument)"
+                        (click)="modifyDocument(item.DataBeanProperties.IDAgreementAttached , 'Editar')">
+                        <i class="fas fa-edit"></i>
+                    </button> -->
+                <!-- <button title="Eliminar Documento" class=" btn-datatable btn-icon btn-transparent-dark"
+                        type="button" (click)="openDelete(item.DataBeanProperties.IDAgreementAttached, modalDelete)">
+                        <i class="fas fa-trash-alt"></i>
+                    </button> -->
+                <!-- </td> -->
+            </tr>
+        </tbody>
+    </table>
+    <pagination-controls (pageChange)="pageActual = $event"></pagination-controls>
+</div>
+
+
+<ng-template #modalDocument>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">{{titleMS}}</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-6">
+                    <label>Subir Documento</label>
+                    <br>
+                    <label for="file-upload2" class="custom-file-upload">
+                        <i class="fa fa-cloud-upload"></i> Cargar documento
+                    </label>
+                    <br>
+                    <input id="file-upload2" type="file" placeholder="Seleccionar foto"
+                        (change)="cargarFile($event.target.files)" />
+                    <div>
+                        <a *ngIf="ruta != ''" href="{{ruta}}" target="_blank">{{nombreArchivo}}</a>
+                        <a *ngIf="mostrarDocumento">{{nombreArchivo2}}</a>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="Descripcion">Descripción</label>
+                        <textarea id="Descripcion" class="form-control" [(ngModel)]="Descripcion"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-danger m-1" type="button" (click)="cerrar()">Cerrar</button>
+            <button class="btn btn-outline-success m-1" type="button" (click)="sendDocument()">{{titleBS}}</button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- <ng-template #modalDelete>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Eliminar</h5>
+            <button class="close" type="button" (click)="cerrar()" aria-label="Close"><span
+                    aria-hidden="true">×</span></button>
+        </div>
+        <div class="modal-body">
+            <p class="text-center">¿Desea eliminar el elemento seleccionado?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline-success m-1" type="button" (click)="deleteDocument()">Confirmar</button>
+        </div>
+    </div>
+</ng-template> -->
